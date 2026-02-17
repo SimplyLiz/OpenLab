@@ -67,8 +67,11 @@ def test_synthesize_anthropic():
 def test_synthesize_unknown_provider():
     with patch("openlab.services.llm_service.settings") as mock_settings:
         mock_settings.llm_provider = "invalid"
+        mock_settings.anthropic_api_key = ""
+        mock_settings.openai_api_key = ""
+        mock_settings.ollama_url = "http://localhost:99999"
 
         from openlab.services.llm_service import synthesize
 
-        with pytest.raises(ValueError, match="Unknown LLM provider"):
+        with pytest.raises(ValueError, match="No LLM provider available"):
             synthesize("test")

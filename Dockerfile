@@ -48,4 +48,4 @@ COPY alembic/ alembic/
 
 EXPOSE 8000
 
-CMD ["uvicorn", "biolab.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "openlab.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]

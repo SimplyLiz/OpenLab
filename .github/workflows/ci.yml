@@ -34,6 +34,8 @@ jobs:
           pip install -e ".[dev]"
       - name: Lint
         run: ruff check src/ tests/
+      - name: Type check
+        run: mypy src/openlab/ --ignore-missing-imports
       - name: Test
         run: pytest tests/ -v --ignore=tests/test_cellforge/unit/test_engine_import.py
 
