@@ -1,153 +1,139 @@
-# BioLab
+# OpenLab
 
-Unified bioinformatics platform for gene analysis, evidence synthesis, and whole-cell simulation.
+Open bioinformatics platform for gene analysis, cancer research, and autonomous scientific investigation.
 
-BioLab combines genomic data ingestion, LLM-powered functional prediction, and multi-scale cell simulation into a single interactive environment. Load a genome, analyze genes against public databases, synthesize function hypotheses with AI, and simulate cellular behavior — all from one interface.
+OpenLab extends a mature genomics platform with AI agents that autonomously investigate cancer genes, produce fully-cited research dossiers, and publish to a public feed where humans can challenge, correct, and fork findings.
 
-## Features
+## What it does
 
-- **Multi-genome management** — load genomes from GenBank, NCBI accessions, Ensembl, or FASTA files
-- **Gene analysis & evidence synthesis** — aggregate functional evidence from BRENDA, SABIO-RK, KEGG, and Datanator
-- **LLM-powered predictions** — synthesize gene function hypotheses using Claude, OpenAI, or local Ollama models
-- **Cell simulation** — multi-timescale ODE engine covering metabolism, gene expression, growth, mutation, and epigenetics
-- **CellForge** — advanced whole-cell simulation with thermodynamic constraints, stochastic processes (Gillespie SSA), and FBA
-- **Population dynamics** — population-level growth, division, and genetic drift simulation
-- **Interactive frontend** — React/TypeScript UI with genome browser, petri dish visualization, knockout lab, and real-time charts
-- **CLI & API** — full Typer CLI and FastAPI REST/WebSocket API
+**Inherited from BioLab** — genome management, gene analysis, evidence synthesis from public databases (BRENDA, KEGG, SABIO-RK), LLM-powered functional prediction, multi-scale cell simulation, CellForge whole-cell engine, population dynamics.
 
-## Requirements
+**New in OpenLab:**
 
-- Python 3.11+
-- Node.js 18+ (for frontend)
-- Rust toolchain (optional, for native CellForge engine)
+- **Gene Dossier Agent** — autonomous pipeline that investigates a gene's role in cancer: fetches identity from NCBI/Ensembl/UniProt, gathers literature from EuropePMC, synthesizes findings via LLM, extracts and validates citations, runs critic QA, and produces a fully-cited Markdown/JSON report with provenance tracking
+- **ResearchBook** — public feed where agent research is published as threads. Humans can comment, challenge specific claims (triggers automated re-evaluation), submit corrections, and fork threads with modified parameters
+- **Cancer Evidence Sources** — six cancer databases integrated into the convergence scoring engine: ClinVar, COSMIC, OncoKB, cBioPortal, CIViC, TCGA/GDC
+- **Variant Interpretation** — parse VCF files, annotate variants against multiple databases in parallel, compute consensus classification, render reports with mandatory research-use-only disclaimers
+- **Paper-to-Pipeline** — extract methods sections from PDFs, detect bioinformatics techniques, map to pipeline stages, generate validated YAML configs
 
 ## Quick Start
 
 ```bash
-# Clone
-git clone https://github.com/SimplyLiz/BioLab.git
-cd BioLab
+git clone https://github.com/SimplyLiz/OpenLab.git
+cd OpenLab
 
-# Python setup
+# Python
 python -m venv .venv
-source .venv/bin/activate        # Linux/macOS
-# .venv\Scripts\activate         # Windows
+source .venv/bin/activate
 pip install -e ".[dev,llm]"
 
-# Frontend setup
+# Database
+openlab init
+alembic upgrade head
+
+# Frontend
 cd frontend && npm install && cd ..
 
-# Initialize database
-biolab init
-
-# Launch both backend and frontend
+# Launch
 python launch.py
 ```
 
-Backend runs on `http://localhost:8000`, frontend on `http://localhost:5173`.
+Backend: `http://localhost:8000` | Frontend: `http://localhost:5173`
+
+## CLI
+
+```bash
+# Gene dossier — investigate a gene's role in cancer
+openlab dossier TP53 --cancer colorectal
+openlab dossier BRAF --cancer melanoma --format json --output braf.json
+
+# Variant interpretation — annotate a VCF file
+openlab variants interpret sample.vcf --tumor-type breast --genome hg38
+
+# Paper to pipeline — extract methods from a paper
+openlab paper-to-pipeline extract methods.pdf --output pipeline.yaml
+
+# Agent management
+openlab agent run TP53 --cancer colorectal
+openlab agent status <run_id>
+openlab agent history --limit 20
+
+# Inherited commands
+openlab genes list
+openlab analyze <gene> --deep
+openlab evidence list
+openlab pipeline run <genome_id>
+openlab cellforge run <config.json>
+```
+
+## API
+
+All endpoints under `/api/v1/`. Key new routes:
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/agents/dossier` | Start a dossier generation |
+| GET | `/agents/dossier/{run_id}` | Get completed dossier |
+| WS | `/agents/dossier/{run_id}/stream` | Stream agent events |
+| GET | `/researchbook/feed` | Paginated thread feed |
+| GET | `/researchbook/threads/{id}` | Thread detail with comments |
+| POST | `/researchbook/threads/{id}/challenge` | Challenge a claim |
+| POST | `/researchbook/threads/{id}/fork` | Fork with modifications |
 
 ## Configuration
 
-Set via environment variables or a `.env` file:
+Set via environment variables or `.env`:
 
 | Variable | Description | Default |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | Claude API key for LLM synthesis | — |
-| `OPENAI_API_KEY` | OpenAI API key (alternative provider) | — |
 | `LLM_PROVIDER` | `anthropic`, `openai`, or `ollama` | `anthropic` |
-| `LLM_MODEL` | Model name | `claude-sonnet-4-5-20250929` |
-| `DATABASE_URL` | SQLAlchemy database URL | `sqlite:///biolab.db` |
+| `DATABASE_URL` | SQLAlchemy database URL | `sqlite:///openlab.db` |
 | `NCBI_API_KEY` | NCBI E-utilities key (10 req/s vs 3) | — |
-| `NCBI_EMAIL` | Required by NCBI for identification | — |
-| `BIOLAB_BACKEND_PORT` | Backend port | `8000` |
-| `BIOLAB_FRONTEND_PORT` | Frontend port | `5173` |
-
-## CLI
-
-```
-biolab genes       Gene operations (list, import, search)
-biolab analyze     Deep gene analysis & LLM synthesis
-biolab evidence    Evidence source management
-biolab synthesize  LLM function synthesis
-biolab pipeline    Multi-phase evidence pipeline
-biolab validate    Validation and quality checks
-biolab cellforge   CellForge whole-cell simulation engine
-biolab init        Initialize database
-```
-
-### CellForge subcommands
-
-```
-biolab cellforge annotate <fasta>   Run genome annotation pipeline
-biolab cellforge run <config.json>  Run a whole-cell simulation
-biolab cellforge serve              Start the CellForge API server
-biolab cellforge benchmark          Run performance benchmarks
-biolab cellforge info               Show version and dependency info
-```
-
-## Docker
-
-```bash
-docker-compose up
-```
-
-This starts the backend (port 8000) and Redis cache (port 6379).
-
-For GPU-accelerated workloads:
-
-```bash
-docker build -f docker/Dockerfile.gpu -t biolab-gpu .
-```
+| `ONCOKB_TOKEN` | OncoKB API token (free academic) | — |
+| `COSMIC_TOKEN` | COSMIC API token (academic registration) | — |
+| `AGENT_TIMEOUT_SECONDS` | Max agent run duration | `600` |
+| `AGENT_MAX_TOOL_CALLS` | Max tool calls per agent run | `50` |
 
 ## Project Structure
 
 ```
-src/biolab/
-  api/              REST API (FastAPI)
+src/openlab/
+  agents/           Autonomous agent framework (dossier, provenance, critic)
+  researchbook/     Public research feed (threads, comments, challenges, forks)
+  cancer/           Variant interpretation (VCF, annotation, classification)
+  paper/            Paper-to-pipeline (PDF extraction, methods parsing, YAML)
+  contrib/cancer/   Cancer evidence sources (ClinVar, COSMIC, OncoKB, etc.)
+  api/              REST + WebSocket API (FastAPI)
   cli/              CLI commands (Typer)
-  services/         Business logic (LLM, ETL, import)
-  ingestion/        GenBank/FASTA parsing
-  simulation/       Core simulation engine
-  cellforge/        Advanced whole-cell simulation
-    core/           Simulation kernel
-    processes/      Biological processes (transcription, translation, etc.)
-    constraints/    Thermodynamic & energy constraints
-    annotation/     Genome annotation pipeline
-    api/            CellForge REST API
-  contrib/          Plugin modules (DNASyn evidence pipeline)
+  services/         Core services (LLM, convergence, evidence, NCBI, Ensembl)
   db/               Database models & migrations
+  simulation/       Cell simulation engine
+  cellforge/        Whole-cell simulation (CellForge)
 
 frontend/
-  src/pages/        React page components
-  src/components/   UI components (genome browser, petri dish, charts)
-  src/hooks/        Data fetching & state hooks
+  src/pages/        React pages (dashboard, ResearchBook feed, thread detail)
+  src/components/   UI components (claims table, confidence bars, filters)
   src/stores/       Zustand state management
+  src/hooks/        WebSocket streaming hooks
 
-crates/
-  cellforge-engine/ Rust native simulation engine (optional)
-```
-
-## Optional Dependencies
-
-Install extras for additional capabilities:
-
-```bash
-pip install -e ".[cellforge]"    # CellForge (COBRApy, GillesPy2, Redis, Zarr)
-pip install -e ".[ml]"           # ML models (PyTorch, Transformers)
-pip install -e ".[validation]"   # Validation (libRoadRunner, matplotlib)
-pip install -e ".[dashboard]"    # Streamlit dashboard
-pip install -e ".[postgres]"     # PostgreSQL support
+tests/              409 tests (181 new for cancer/agent/researchbook)
 ```
 
 ## Development
 
 ```bash
 pip install -e ".[dev]"
-pytest                    # Run tests
-ruff check src/           # Lint
-mypy src/                 # Type check
+pytest                              # Run all tests
+pytest tests/test_agents/ -v        # Agent tests only
+ruff check src/ tests/              # Lint
+mypy src/ --ignore-missing-imports  # Type check
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, architecture overview, and contribution guidelines.
 
 ## License
 
-All rights reserved.
+[MIT](LICENSE)
