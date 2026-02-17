@@ -1,7 +1,7 @@
 """LLM synthesis service — multi-provider adapter for hypothesis generation.
 
 Ported from DNASyn's llm_service.py, made fully async with httpx.
-Supports Anthropic, OpenAI, and Ollama backends.
+Supports Anthropic, OpenAI, Gemini, Grok, and Ollama backends.
 
 Takes collected evidence for a mystery gene and synthesizes a
 human-readable hypothesis about its function.
@@ -9,7 +9,6 @@ human-readable hypothesis about its function.
 
 from __future__ import annotations
 
-import json
 import logging
 import re
 import time
@@ -103,10 +102,17 @@ async def synthesize(
         return await _anthropic(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
     elif provider == "openai":
         return await _openai(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+    elif provider == "gemini":
+        return await _gemini(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+    elif provider == "grok":
+        return await _grok(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
     elif provider == "ollama":
         return await _ollama(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
     else:
-        raise ValueError(f"No LLM provider available (set ANTHROPIC_API_KEY or OPENAI_API_KEY)")
+        raise ValueError(
+            "No LLM provider available"
+            " (set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, or GROK_API_KEY)"
+        )
 
 
 def _ollama_available() -> bool:
@@ -130,6 +136,10 @@ def _resolve_provider() -> str:
         return "anthropic"
     if preferred == "openai" and config.llm.openai_api_key:
         return "openai"
+    if preferred == "gemini" and config.llm.gemini_api_key:
+        return "gemini"
+    if preferred == "grok" and config.llm.grok_api_key:
+        return "grok"
     if preferred == "ollama":
         return "ollama"
 
@@ -142,6 +152,10 @@ def _resolve_provider() -> str:
         return "anthropic"
     if config.llm.openai_api_key:
         return "openai"
+    if config.llm.gemini_api_key:
+        return "gemini"
+    if config.llm.grok_api_key:
+        return "grok"
 
     return preferred  # will fail with a clear error in the provider func
 
@@ -222,7 +236,7 @@ def _get_ollama_model() -> str:
 
 def _is_cloud_model(name: str) -> bool:
     """Check if a model name belongs to a cloud provider, not ollama."""
-    return any(tok in name for tok in ("claude", "gpt", "o1-", "o3-"))
+    return any(tok in name for tok in ("claude", "gpt", "o1-", "o3-", "gemini", "grok"))
 
 
 def _model_for_provider(provider: str) -> str:
@@ -236,6 +250,10 @@ def _model_for_provider(provider: str) -> str:
         return m if "claude" in m else "claude-sonnet-4-5-20250929"
     elif provider == "openai":
         return m if "gpt" in m or "o1" in m or "o3" in m else "gpt-4o"
+    elif provider == "gemini":
+        return m if "gemini" in m else "gemini-2.0-flash"
+    elif provider == "grok":
+        return m if "grok" in m else "grok-3-mini"
     elif provider == "ollama":
         if _is_cloud_model(m):
             discovered = _get_ollama_model()
@@ -291,22 +309,24 @@ async def _anthropic(
     return data["content"][0]["text"]
 
 
-async def _openai(
+async def _openai_compatible(
     http: httpx.AsyncClient,
     prompt: str,
     *,
+    base_url: str,
+    api_key: str,
+    model: str,
+    provider_name: str,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
 ) -> str:
-    if not config.llm.openai_api_key:
-        raise ValueError("openai_api_key not configured")
-    model = _model_for_provider("openai")
-    logger.info(f"LLM synthesis via OpenAI ({model})")
+    """Shared helper for OpenAI-compatible chat completion APIs."""
+    logger.info(f"LLM synthesis via {provider_name} ({model})")
     start = time.perf_counter()
     resp = await http.post(
-        "https://api.openai.com/v1/chat/completions",
+        base_url,
         headers={
-            "Authorization": f"Bearer {config.llm.openai_api_key}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         },
         json={
@@ -326,7 +346,7 @@ async def _openai(
     usage = data.get("usage", {})
     try:
         usage_service.record_usage(
-            provider="openai",
+            provider=provider_name,
             model=model,
             purpose=purpose,
             prompt_tokens=usage.get("prompt_tokens", 0),
@@ -335,8 +355,68 @@ async def _openai(
             gene_locus_tag=gene_locus_tag,
         )
     except Exception:
-        logger.debug("Usage logging failed for OpenAI call", exc_info=True)
+        logger.debug(f"Usage logging failed for {provider_name} call", exc_info=True)
     return data["choices"][0]["message"]["content"]
+
+
+async def _openai(
+    http: httpx.AsyncClient,
+    prompt: str,
+    *,
+    purpose: str = "gene_synthesis",
+    gene_locus_tag: str | None = None,
+) -> str:
+    if not config.llm.openai_api_key:
+        raise ValueError("openai_api_key not configured")
+    return await _openai_compatible(
+        http, prompt,
+        base_url="https://api.openai.com/v1/chat/completions",
+        api_key=config.llm.openai_api_key,
+        model=_model_for_provider("openai"),
+        provider_name="openai",
+        purpose=purpose,
+        gene_locus_tag=gene_locus_tag,
+    )
+
+
+async def _gemini(
+    http: httpx.AsyncClient,
+    prompt: str,
+    *,
+    purpose: str = "gene_synthesis",
+    gene_locus_tag: str | None = None,
+) -> str:
+    if not config.llm.gemini_api_key:
+        raise ValueError("gemini_api_key not configured")
+    return await _openai_compatible(
+        http, prompt,
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        api_key=config.llm.gemini_api_key,
+        model=_model_for_provider("gemini"),
+        provider_name="gemini",
+        purpose=purpose,
+        gene_locus_tag=gene_locus_tag,
+    )
+
+
+async def _grok(
+    http: httpx.AsyncClient,
+    prompt: str,
+    *,
+    purpose: str = "gene_synthesis",
+    gene_locus_tag: str | None = None,
+) -> str:
+    if not config.llm.grok_api_key:
+        raise ValueError("grok_api_key not configured")
+    return await _openai_compatible(
+        http, prompt,
+        base_url="https://api.x.ai/v1/chat/completions",
+        api_key=config.llm.grok_api_key,
+        model=_model_for_provider("grok"),
+        provider_name="grok",
+        purpose=purpose,
+        gene_locus_tag=gene_locus_tag,
+    )
 
 
 async def _ollama(

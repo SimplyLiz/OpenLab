@@ -69,6 +69,8 @@ def test_synthesize_unknown_provider():
         mock_settings.llm_provider = "invalid"
         mock_settings.anthropic_api_key = ""
         mock_settings.openai_api_key = ""
+        mock_settings.gemini_api_key = ""
+        mock_settings.grok_api_key = ""
         mock_settings.ollama_url = "http://localhost:99999"
 
         from openlab.services.llm_service import synthesize

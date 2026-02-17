@@ -2,7 +2,7 @@
 
 This is a thin sync wrapper around the async llm_synthesis module.
 DNASyn services (validation_service, etc.) call llm_service.synthesize(prompt)
-synchronously. This module bridges that to the async providers.
+synchronously. Supports Anthropic, OpenAI, Gemini, Grok, and Ollama backends.
 """
 
 import logging
@@ -48,11 +48,15 @@ def _get_ollama_model() -> str:
 def _model_for_provider(provider: str) -> str:
     """Return the right model name for the provider."""
     m = settings.llm_model
-    cloud_markers = ("claude", "gpt", "o1-", "o3-")
+    cloud_markers = ("claude", "gpt", "o1-", "o3-", "gemini", "grok")
     if provider == "anthropic":
         return m if "claude" in m else "claude-sonnet-4-5-20250929"
     elif provider == "openai":
         return m if "gpt" in m or "o1" in m or "o3" in m else "gpt-4o"
+    elif provider == "gemini":
+        return m if "gemini" in m else "gemini-2.0-flash"
+    elif provider == "grok":
+        return m if "grok" in m else "grok-3-mini"
     elif provider == "ollama":
         if any(tok in m for tok in cloud_markers):
             discovered = _get_ollama_model()
@@ -71,6 +75,10 @@ def _resolve_provider() -> str:
         return "anthropic"
     if preferred == "openai" and settings.openai_api_key:
         return "openai"
+    if preferred == "gemini" and settings.gemini_api_key:
+        return "gemini"
+    if preferred == "grok" and settings.grok_api_key:
+        return "grok"
     if preferred == "ollama":
         return "ollama"
 
@@ -83,6 +91,10 @@ def _resolve_provider() -> str:
         return "anthropic"
     if settings.openai_api_key:
         return "openai"
+    if settings.gemini_api_key:
+        return "gemini"
+    if settings.grok_api_key:
+        return "grok"
 
     return preferred
 
@@ -103,10 +115,17 @@ def synthesize(
         return _openai(prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
     elif provider == "anthropic":
         return _anthropic(prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+    elif provider == "gemini":
+        return _gemini(prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+    elif provider == "grok":
+        return _grok(prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
     elif provider == "ollama":
         return _ollama(prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
     else:
-        raise ValueError(f"No LLM provider available (set ANTHROPIC_API_KEY, OPENAI_API_KEY, or run ollama)")
+        raise ValueError(
+            "No LLM provider available"
+            " (set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, or GROK_API_KEY)"
+        )
 
 
 def _openai(
@@ -186,6 +205,93 @@ def _anthropic(
     except Exception:
         logger.debug("Usage logging failed for Anthropic call", exc_info=True)
     return data["content"][0]["text"]
+
+
+def _openai_compatible(
+    prompt: str,
+    *,
+    base_url: str,
+    api_key: str,
+    model: str,
+    provider_name: str,
+    purpose: str = "validation",
+    gene_locus_tag: str | None = None,
+) -> str:
+    """Shared helper for OpenAI-compatible chat completion APIs (Gemini, Grok)."""
+    logger.info(f"LLM synthesis via {provider_name} ({model})")
+    start = time.perf_counter()
+    resp = httpx.post(
+        base_url,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.3,
+            "max_tokens": 2000,
+        },
+        timeout=120,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    duration_ms = int((time.perf_counter() - start) * 1000)
+    usage = data.get("usage", {})
+    try:
+        usage_service.record_usage(
+            provider=provider_name,
+            model=model,
+            purpose=purpose,
+            prompt_tokens=usage.get("prompt_tokens", 0),
+            completion_tokens=usage.get("completion_tokens", 0),
+            duration_ms=duration_ms,
+            gene_locus_tag=gene_locus_tag,
+        )
+    except Exception:
+        logger.debug(f"Usage logging failed for {provider_name} call", exc_info=True)
+    return data["choices"][0]["message"]["content"]
+
+
+def _gemini(
+    prompt: str,
+    *,
+    purpose: str = "validation",
+    gene_locus_tag: str | None = None,
+) -> str:
+    if not settings.gemini_api_key:
+        raise ValueError("gemini_api_key not configured")
+    return _openai_compatible(
+        prompt,
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        api_key=settings.gemini_api_key,
+        model=_model_for_provider("gemini"),
+        provider_name="gemini",
+        purpose=purpose,
+        gene_locus_tag=gene_locus_tag,
+    )
+
+
+def _grok(
+    prompt: str,
+    *,
+    purpose: str = "validation",
+    gene_locus_tag: str | None = None,
+) -> str:
+    if not settings.grok_api_key:
+        raise ValueError("grok_api_key not configured")
+    return _openai_compatible(
+        prompt,
+        base_url="https://api.x.ai/v1/chat/completions",
+        api_key=settings.grok_api_key,
+        model=_model_for_provider("grok"),
+        provider_name="grok",
+        purpose=purpose,
+        gene_locus_tag=gene_locus_tag,
+    )
 
 
 def _ollama(

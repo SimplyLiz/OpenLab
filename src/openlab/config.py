@@ -24,10 +24,12 @@ class UniProtConfig(BaseModel):
 
 
 class LLMConfig(BaseModel):
-    provider: str = "anthropic"  # "anthropic", "openai", "ollama"
+    provider: str = "anthropic"  # "anthropic", "openai", "ollama", "gemini", "grok"
     model: str = "claude-sonnet-4-5-20250929"
     anthropic_api_key: str = ""
     openai_api_key: str = ""
+    gemini_api_key: str = ""
+    grok_api_key: str = ""
     ollama_url: str = "http://localhost:11434"
     max_synthesis_genes: int = 10
 
@@ -137,6 +139,8 @@ def _build_config() -> AppConfig:
             model=os.environ.get("LLM_MODEL", "claude-sonnet-4-5-20250929"),
             anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", "") or os.environ.get("CLAUDE_API_KEY", ""),
             openai_api_key=os.environ.get("OPENAI_API_KEY", ""),
+            gemini_api_key=os.environ.get("GEMINI_API_KEY", ""),
+            grok_api_key=os.environ.get("GROK_API_KEY", ""),
             ollama_url=os.environ.get("OLLAMA_URL", "http://localhost:11434"),
             max_synthesis_genes=int(os.environ.get("MAX_SYNTHESIS_GENES", "10")),
         ),
@@ -214,6 +218,14 @@ class _SettingsCompat:
     @property
     def anthropic_api_key(self) -> str:
         return config.llm.anthropic_api_key
+
+    @property
+    def gemini_api_key(self) -> str:
+        return config.llm.gemini_api_key
+
+    @property
+    def grok_api_key(self) -> str:
+        return config.llm.grok_api_key
 
     @property
     def ollama_url(self) -> str:
