@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Rust
+/target/
+*.so
+*.pyd
+
+# DB
+*.db
+*.sqlite3
+
+# Environment
+.env
+
+# Node
+node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+frontend/tsconfig.tsbuildinfo
+
+# Local indexes
+.ckb/
+
+# Snapshots
+biolab-snapshot.zip

@@ -1,0 +1,94 @@
+[project]
+name = "openlab"
+version = "0.1.0"
+description = "OpenLab — open bioinformatics platform for gene analysis, cancer research, evidence synthesis, and whole-cell simulation"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "httpx>=0.28",
+    "pydantic>=2.10",
+    "pydantic-settings>=2.3",
+    "biopython>=1.84",
+    "websockets>=14.0",
+    "asyncio-throttle>=1.0",
+    "pyyaml>=6.0",
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "typer[all]>=0.12",
+    "rich>=13.7",
+    "python-multipart>=0.0.9",
+    "numpy>=1.24",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+postgres = ["psycopg2-binary>=2.9"]
+pipelines = ["dagster>=1.7", "dagster-webserver>=1.7"]
+llm = ["openai>=1.0"]
+ml = ["torch>=2.0", "transformers>=4.30"]
+validation = ["libroadrunner>=2.4", "matplotlib>=3.7", "pandas>=2.0"]
+dashboard = [
+    "streamlit>=1.30",
+    "pycirclize>=1.0",
+    "plotly>=5.0",
+    "streamlit-molstar>=0.8",
+]
+cellforge = [
+    "cobra>=0.29",
+    "gillespy2>=1.8",
+    "redis>=5.0",
+    "pyarrow>=14.0",
+    "zarr>=2.16",
+    "h5py>=3.10",
+    "equilibrator-api>=0.4",
+]
+cancer = [
+    "civicpy",
+    "cyvcf2",
+    "pyliftover",
+    "pymupdf4llm",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=5.0",
+    "ruff>=0.8",
+    "mypy>=1.8",
+    "respx",
+    "factory-boy",
+]
+
+[project.scripts]
+openlab = "openlab.cli.main:app"
+
+[build-system]
+requires = ["maturin>=1.7"]
+build-backend = "maturin"
+
+[tool.maturin]
+python-source = "src"
+module-name = "openlab.cellforge._engine"
+manifest-path = "crates/cellforge-engine/Cargo.toml"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.dagster]
+module_name = "openlab.pipelines.definitions"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true

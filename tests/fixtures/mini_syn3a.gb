@@ -1,0 +1,52 @@
+LOCUS       CP016816                 900 bp    DNA     circular BCT 01-JAN-2024
+DEFINITION  Synthetic Mycoplasma mycoides JCVI-syn3A, complete genome.
+ACCESSION   CP016816
+VERSION     CP016816.2
+KEYWORDS    .
+SOURCE      Synthetic Mycoplasma mycoides JCVI-syn3A
+  ORGANISM  Synthetic Mycoplasma mycoides JCVI-syn3A
+            Bacteria; Tenericutes; Mollicutes; Mycoplasmataceae; Mycoplasma.
+FEATURES             Location/Qualifiers
+     source          1..900
+                     /organism="Synthetic Mycoplasma mycoides JCVI-syn3A"
+                     /mol_type="genomic DNA"
+     CDS             1..300
+                     /gene="dnaA"
+                     /locus_tag="JCVISYN3A_0001"
+                     /product="chromosomal replication initiator protein DnaA"
+                     /translation="MKKILVTDAFTLEDQVLELAKKGLNESKIHFISREG
+                     FYQRIANDHQQALKLAREAQGLSDAELVAQVLRSKGLAARHVEAGEAITD
+                     LIREGVDFEEISGQLEQM"
+     CDS             301..600
+                     /locus_tag="JCVISYN3A_0002"
+                     /product="hypothetical protein"
+                     /translation="MKKILVTDAFTLEDQVLELAKKGLNESKIHFISREG
+                     FYQRIANDHQQALKLAREAQGLSDAELVAQVLRSKGLAARHVEAGEAITD
+                     LIREGVDFEEISGQLEQM"
+     tRNA            601..675
+                     /locus_tag="JCVISYN3A_0003"
+                     /product="tRNA-Met"
+     CDS             676..900
+                     /gene="ftsZ"
+                     /locus_tag="JCVISYN3A_0004"
+                     /product="cell division protein FtsZ"
+                     /translation="MFEPMELTNDAVISKVLGGAGGIGTGLPKAIDKIIE
+                     ELGGKGMKIVIGSKGGVGNAVEELLNEAVARLSKNLDIVITKLDLNDGAR
+                     EKIVEAFM"
+ORIGIN
+        1 atgaaaaaaa ttctagttac agatgccttt actctagaag atcaagtcct tgaactggca
+       61 aaaaagggac ttaatgaatc taagatccac tttataagta gagaaggatt ttatcaaaga
+      121 attgcaaatg atcaccagca agcactaaaa ttagctagag aagctcaagg tctaagtgat
+      181 gctgaacttg ttgcccaagt gttaagatca aaagggcttg ctgctcgtca tgttgaagcc
+      241 ggtgaagcta ttactgattt gattcgtgaa ggtgttgact ttgaagaaat ttctggacaa
+      301 atgaaaaaaa ttctagttac agatgccttt actctagaag atcaagtcct tgaactggca
+      361 aaaaagggac ttaatgaatc taagatccac tttataagta gagaaggatt ttatcaaaga
+      421 attgcaaatg atcaccagca agcactaaaa ttagctagag aagctcaagg tctaagtgat
+      481 gctgaacttg ttgcccaagt gttaagatca aaagggcttg ctgctcgtca tgttgaagcc
+      541 ggtgaagcta ttactgattt gattcgtgaa ggtgttgact ttgaagaaat ttctggacaa
+      601 tggcggaatg gtagacgcac tcgatttaac tggtcgtaat gagaccactc gcactggtaa
+      661 aatgtagacc cattgatgtt tgaaccgatg gaactgacca acgatgctgt tatctcaaaa
+      721 gttttaggtg gtgctggtgg tattggtact ggtctaccaa aagctattga taaaattatt
+      781 gaagaactgg gtggtaaagg tatgaaaatt gttattggtt ctaaaggtgg tgttggtaat
+      841 gctgttgaag aacttttaaa tgaagctgtt gctagacttt ctaaaaattt ggatattgtc
+//

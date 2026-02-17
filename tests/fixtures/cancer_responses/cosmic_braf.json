@@ -1,0 +1,10 @@
+[
+  3,
+  ["COSM476", "COSM477", "COSM478"],
+  null,
+  [
+    ["COSM476", "BRAF", "c.1799T>A", "p.V600E", "skin", "malignant melanoma"],
+    ["COSM477", "BRAF", "c.1798_1799GT>AA", "p.V600K", "skin", "malignant melanoma"],
+    ["COSM478", "BRAF", "c.1799_1800TG>AA", "p.V600D", "thyroid", "papillary carcinoma"]
+  ]
+]

@@ -1,0 +1,29 @@
+> **FOR RESEARCH USE ONLY. This is not a validated clinical diagnostic tool. Do not use for clinical decision-making.**
+
+# Variant Interpretation Report
+
+**Sample:** {{ report.sample_id or "N/A" }}
+**Tumor Type:** {{ report.tumor_type or "N/A" }}
+**Genome Build:** {{ report.genome_build.value }}
+**Total Variants Parsed:** {{ report.total_variants_parsed }}
+**Annotated:** {{ report.total_annotated }}
+**Pathogenic/Likely Pathogenic:** {{ report.total_pathogenic }}
+**Actionable:** {{ report.total_actionable }}
+
+{% if report.summary %}
+## Summary
+{{ report.summary }}
+{% endif %}
+
+{% if report.variants %}
+## Variants
+
+| Gene | Variant | Classification | Confidence | Actionable | Sources |
+|------|---------|---------------|------------|------------|---------|
+{% for av in report.variants %}
+| {{ av.variant.gene_symbol }} | {{ av.variant.hgvs_p or av.variant.hgvs_g or (av.variant.chrom ~ ":" ~ av.variant.pos) }} | {{ av.consensus_classification.value }} | {{ "%.0f%%" | format(av.confidence * 100) }} | {{ "Yes" if av.is_actionable else "No" }} | {{ av.annotation_sources | join(", ") }} |
+{% endfor %}
+{% endif %}
+
+---
+> **FOR RESEARCH USE ONLY. This is not a validated clinical diagnostic tool. Do not use for clinical decision-making.**

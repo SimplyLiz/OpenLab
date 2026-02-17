@@ -1,0 +1,50 @@
+{
+  "data": {
+    "genes": {
+      "nodes": [
+        {
+          "id": 45,
+          "name": "TP53",
+          "description": "TP53 mutations are the most common alteration in cancer.",
+          "officialName": "tumor protein p53",
+          "variants": {
+            "totalCount": 85,
+            "nodes": [
+              {"id": 101, "name": "R175H", "singleVariantMolecularProfileId": 101, "variantTypes": [{"name": "missense_variant"}]},
+              {"id": 102, "name": "R248W", "singleVariantMolecularProfileId": 102, "variantTypes": [{"name": "missense_variant"}]}
+            ]
+          },
+          "evidenceItems": {
+            "totalCount": 3,
+            "nodes": [
+              {
+                "id": 1001,
+                "status": "accepted",
+                "evidenceType": "PREDICTIVE",
+                "evidenceLevel": "B",
+                "evidenceDirection": "SUPPORTS",
+                "significance": "SENSITIVITY",
+                "description": "TP53 mutations predict sensitivity to WEE1 inhibitor AZD1775",
+                "therapies": [{"name": "AZD1775"}],
+                "disease": {"name": "Ovarian Cancer", "doid": "2394"},
+                "source": {"citationId": "28263969", "sourceType": "PUBMED"}
+              },
+              {
+                "id": 1002,
+                "status": "accepted",
+                "evidenceType": "PROGNOSTIC",
+                "evidenceLevel": "B",
+                "evidenceDirection": "SUPPORTS",
+                "significance": "POOR_OUTCOME",
+                "description": "TP53 mutations associated with poor prognosis in breast cancer",
+                "therapies": [],
+                "disease": {"name": "Breast Cancer", "doid": "1612"},
+                "source": {"citationId": "20805302", "sourceType": "PUBMED"}
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

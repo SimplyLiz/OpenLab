@@ -1,0 +1,142 @@
+# Curated gene reclassifications from published research.
+#
+# Sources:
+#   Bianchi et al. 2022 — J. Phys. Chem. B, 126(36), 6820-6834
+#     doi: 10.1021/acs.jpcb.2c04188
+#     "Toward the Complete Functional Characterization of a Minimal Bacterial Proteome"
+#     Methods: AlphaFold2, HHPred, BlastKOALA, FATCAT, SynWiki, STRING
+#
+#   Kilinc, Jia & Jernigan 2025 — Methods Mol. Biol., 2867, 153-168
+#     doi: 10.1007/978-1-0716-4196-5_9
+#     "Improving the Annotations of JCVI-Syn3a Proteins"
+#     Methods: PROST (ESM-1b embeddings), BLAST, Foldseek, FATCAT validation
+#
+# Fields:
+#   locus_tag: JCVI-syn3A locus tag
+#   predicted_function: concise functional assignment
+#   confidence: 0.0-1.0 (based on evidence quality in the paper)
+#   source: which paper(s) made the call
+#   method: computational method used
+#   notes: additional detail
+
+reclassifications:
+  # --- Bianchi et al. 2022 ---
+  - locus_tag: JCVISYN3A_0239
+    predicted_function: "EzrA-like FtsZ filament negative regulator"
+    confidence: 0.85
+    source: "Bianchi2022"
+    method: "AlphaFold2 + FATCAT structural alignment"
+    notes: "Spectrin repeats + TM segment; regulates FtsZ ring dynamics"
+
+  - locus_tag: JCVISYN3A_0353
+    predicted_function: "GpsB cell division protein — divisome localization regulator"
+    confidence: 0.85
+    source: "Bianchi2022"
+    method: "HHPred + structural comparison to B. subtilis GpsB"
+    notes: "Coordinates cell wall synthesis with division in wall-less context"
+
+  - locus_tag: JCVISYN3A_0412
+    predicted_function: "SecDF protein translocase accessory subunit"
+    confidence: 0.80
+    source: "Bianchi2022"
+    method: "HHPred + operon architecture"
+    notes: "Part of Sec translocation machinery"
+
+  - locus_tag: JCVISYN3A_0421
+    predicted_function: "YloU lipid biosynthesis regulation"
+    confidence: 0.75
+    source: "Bianchi2022"
+    method: "HHPred + genomic context"
+    notes: "Regulates lipid synthesis pathway"
+
+  - locus_tag: JCVISYN3A_0430
+    predicted_function: "YlxM/Ffh SRP translocation effector"
+    confidence: 0.80
+    source: "Bianchi2022"
+    method: "HHPred"
+    notes: "Signal recognition particle pathway component"
+
+  - locus_tag: JCVISYN3A_0516
+    predicted_function: "YqgP/GlpG-like intramembrane protease (rhomboid family)"
+    confidence: 0.80
+    source: "Bianchi2022"
+    method: "HHPred + structural alignment"
+    notes: "Rhomboid-family intramembrane serine protease"
+
+  - locus_tag: JCVISYN3A_0527
+    predicted_function: "YceD/YlbN 23S rRNA accumulation factor"
+    confidence: 0.85
+    source: "Bianchi2022+Kilinc2025"
+    method: "HHPred + PROST convergent prediction"
+    notes: "Both studies independently assign rRNA maturation role"
+
+  - locus_tag: JCVISYN3A_0604
+    predicted_function: "LemA/GacS-like two-component sensor histidine kinase"
+    confidence: 0.75
+    source: "Bianchi2022"
+    method: "HHPred + domain analysis"
+    notes: "Possible regulatory role in gene expression"
+
+  - locus_tag: JCVISYN3A_0797
+    predicted_function: "AtpI ATP synthase assembly/proton channel component"
+    confidence: 0.80
+    source: "Bianchi2022"
+    method: "HHPred + operon context near atp operon"
+    notes: "Adjacent to ATP synthase genes; likely assembly factor"
+
+  - locus_tag: JCVISYN3A_0878
+    predicted_function: "ActP cation/acetate symporter (or GabP amino acid transporter)"
+    confidence: 0.75
+    source: "Bianchi2022+Kilinc2025"
+    method: "HHPred + PROST"
+    notes: "Bianchi: GabP amino acid transporter; Kilinc: ActP cation/acetate symporter"
+
+  - locus_tag: JCVISYN3A_0908
+    predicted_function: "YidC membrane protein insertase (Oxa1 superfamily)"
+    confidence: 0.90
+    source: "Bianchi2022"
+    method: "HHPred + structural alignment"
+    notes: "Essential membrane protein biogenesis factor"
+
+  # --- Kilinc, Jia & Jernigan 2025 (PROST unique hits) ---
+  - locus_tag: JCVISYN3A_0870
+    predicted_function: "Sodium:proton antiporter"
+    confidence: 0.80
+    source: "Kilinc2025"
+    method: "PROST (ESM-1b embeddings) + FATCAT validation"
+    notes: "16% sequence identity to known antiporter; validated structurally"
+
+  - locus_tag: JCVISYN3A_0262
+    predicted_function: "Transaldolase / ribulose-phosphate 3-epimerase"
+    confidence: 0.75
+    source: "Kilinc2025"
+    method: "PROST + FATCAT"
+    notes: "Pentose phosphate pathway enzyme"
+
+  - locus_tag: JCVISYN3A_0325
+    predicted_function: "Monocarboxylate/lactate transporter"
+    confidence: 0.75
+    source: "Kilinc2025"
+    method: "PROST + FATCAT"
+    notes: "Membrane transporter for small organic acids"
+
+  - locus_tag: JCVISYN3A_0592
+    predicted_function: "DNA recombination protein RmuC"
+    confidence: 0.70
+    source: "Kilinc2025"
+    method: "PROST + FATCAT"
+    notes: "Involved in DNA recombination/repair"
+
+  - locus_tag: JCVISYN3A_0345
+    predicted_function: "Riboflavin (vitamin B2) transporter"
+    confidence: 0.75
+    source: "Kilinc2025"
+    method: "PROST + FATCAT"
+    notes: "Essential vitamin uptake"
+
+  - locus_tag: JCVISYN3A_0314
+    predicted_function: "Folate transporter"
+    confidence: 0.75
+    source: "Kilinc2025"
+    method: "PROST + FATCAT"
+    notes: "Essential vitamin uptake; folate required for one-carbon metabolism"

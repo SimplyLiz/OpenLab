@@ -1,0 +1,28 @@
+{
+  "gene_lookup": [
+    {
+      "hugoSymbol": "BRAF",
+      "entrezGeneId": 673,
+      "oncogene": true,
+      "tsg": false
+    }
+  ],
+  "variants_lookup": [
+    {
+      "gene": {"hugoSymbol": "BRAF", "entrezGeneId": 673},
+      "name": "V600E",
+      "alteration": "V600E",
+      "oncogenic": "Oncogenic",
+      "mutationEffect": {"knownEffect": "Gain-of-function"},
+      "consequence": {"term": "missense_variant"}
+    },
+    {
+      "gene": {"hugoSymbol": "BRAF", "entrezGeneId": 673},
+      "name": "V600K",
+      "alteration": "V600K",
+      "oncogenic": "Oncogenic",
+      "mutationEffect": {"knownEffect": "Gain-of-function"},
+      "consequence": {"term": "missense_variant"}
+    }
+  ]
+}

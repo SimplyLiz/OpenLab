@@ -1,0 +1,29 @@
+{
+  "gene": {
+    "entrezGeneId": 7157,
+    "hugoGeneSymbol": "TP53",
+    "type": "protein-coding"
+  },
+  "mutations": [
+    {
+      "uniqueMutationId": "TP53_R175H",
+      "gene": {"hugoGeneSymbol": "TP53", "entrezGeneId": 7157},
+      "proteinChange": "R175H",
+      "mutationType": "Missense_Mutation",
+      "molecularProfileId": "brca_tcga_mutations",
+      "sampleId": "TCGA-AR-A1AR-01",
+      "cancerType": "Breast",
+      "validationStatus": "Valid"
+    },
+    {
+      "uniqueMutationId": "TP53_R248W",
+      "gene": {"hugoGeneSymbol": "TP53", "entrezGeneId": 7157},
+      "proteinChange": "R248W",
+      "mutationType": "Nonsense_Mutation",
+      "molecularProfileId": "coadread_tcga_mutations",
+      "sampleId": "TCGA-A6-2671-01",
+      "cancerType": "Colorectal",
+      "validationStatus": "Valid"
+    }
+  ]
+}

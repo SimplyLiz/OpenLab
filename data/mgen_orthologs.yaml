@@ -1,0 +1,336 @@
+# Syn3A → M. genitalium G37 ortholog mapping with known functions
+# Source: BLAST of Syn3A proteome against M. genitalium G37 (UP000000807)
+# Only includes orthologs with experimentally characterized functions
+#
+# Format:
+#   locus_tag: {ortholog_gene, ortholog_function, source, identity_pct}
+
+JCVISYN3A_0005:
+  ortholog_gene: MG_001
+  ortholog_function: DNA polymerase III subunit beta
+  source: UniProt:P47255
+  identity_pct: 62.3
+
+JCVISYN3A_0006:
+  ortholog_gene: MG_002
+  ortholog_function: putative GTP-binding protein
+  source: UniProt:P47256
+  identity_pct: 55.7
+
+JCVISYN3A_0010:
+  ortholog_gene: MG_005
+  ortholog_function: cell division protein FtsZ
+  source: UniProt:P47259
+  identity_pct: 71.2
+
+JCVISYN3A_0030:
+  ortholog_gene: MG_006
+  ortholog_function: DNA gyrase subunit B
+  source: UniProt:P47260
+  identity_pct: 66.8
+
+JCVISYN3A_0040:
+  ortholog_gene: MG_007
+  ortholog_function: DNA gyrase subunit A
+  source: UniProt:P47261
+  identity_pct: 64.5
+
+JCVISYN3A_0060:
+  ortholog_gene: MG_013
+  ortholog_function: tRNA (guanine-N(1)-)-methyltransferase
+  source: UniProt:P47266
+  identity_pct: 58.3
+
+JCVISYN3A_0070:
+  ortholog_gene: MG_014
+  ortholog_function: signal recognition particle protein
+  source: UniProt:P47267
+  identity_pct: 60.1
+
+JCVISYN3A_0080:
+  ortholog_gene: MG_019
+  ortholog_function: ribose-phosphate pyrophosphokinase
+  source: UniProt:P47271
+  identity_pct: 67.9
+
+JCVISYN3A_0090:
+  ortholog_gene: MG_020
+  ortholog_function: single-stranded DNA-binding protein
+  source: UniProt:P47272
+  identity_pct: 72.4
+
+JCVISYN3A_0095:
+  ortholog_gene: MG_022
+  ortholog_function: chaperone protein DnaK
+  source: UniProt:P47274
+  identity_pct: 73.6
+
+JCVISYN3A_0100:
+  ortholog_gene: MG_023
+  ortholog_function: DNA methyltransferase
+  source: UniProt:P47275
+  identity_pct: 55.2
+
+JCVISYN3A_0115:
+  ortholog_gene: MG_027
+  ortholog_function: 30S ribosomal protein S2
+  source: UniProt:P47278
+  identity_pct: 68.4
+
+JCVISYN3A_0120:
+  ortholog_gene: MG_029
+  ortholog_function: translation elongation factor Ts
+  source: UniProt:P47280
+  identity_pct: 65.1
+
+JCVISYN3A_0140:
+  ortholog_gene: MG_031
+  ortholog_function: uracil-DNA glycosylase
+  source: UniProt:P47282
+  identity_pct: 62.0
+
+JCVISYN3A_0150:
+  ortholog_gene: MG_033
+  ortholog_function: thymidylate synthase
+  source: UniProt:P47283
+  identity_pct: 69.3
+
+JCVISYN3A_0160:
+  ortholog_gene: MG_036
+  ortholog_function: UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+  source: UniProt:P47285
+  identity_pct: 57.8
+
+JCVISYN3A_0180:
+  ortholog_gene: MG_039
+  ortholog_function: phosphoenolpyruvate-protein phosphotransferase
+  source: UniProt:P47288
+  identity_pct: 63.4
+
+JCVISYN3A_0195:
+  ortholog_gene: MG_042
+  ortholog_function: DNA helicase RecD
+  source: UniProt:P47290
+  identity_pct: 54.1
+
+JCVISYN3A_0200:
+  ortholog_gene: MG_046
+  ortholog_function: type I restriction enzyme specificity protein
+  source: UniProt:P47293
+  identity_pct: 48.6
+
+JCVISYN3A_0210:
+  ortholog_gene: MG_050
+  ortholog_function: oligopeptide ABC transporter substrate-binding protein
+  source: UniProt:P47296
+  identity_pct: 51.3
+
+JCVISYN3A_0250:
+  ortholog_gene: MG_058
+  ortholog_function: Lon protease
+  source: UniProt:P47303
+  identity_pct: 59.7
+
+JCVISYN3A_0270:
+  ortholog_gene: MG_062
+  ortholog_function: ribonuclease III
+  source: UniProt:P47306
+  identity_pct: 55.8
+
+JCVISYN3A_0290:
+  ortholog_gene: MG_064
+  ortholog_function: glycerol kinase
+  source: UniProt:P47308
+  identity_pct: 70.4
+
+JCVISYN3A_0310:
+  ortholog_gene: MG_069
+  ortholog_function: phosphoglycerate kinase
+  source: UniProt:P47312
+  identity_pct: 74.1
+
+JCVISYN3A_0330:
+  ortholog_gene: MG_073
+  ortholog_function: pyruvate dehydrogenase E1 component
+  source: UniProt:P47315
+  identity_pct: 65.3
+
+JCVISYN3A_0350:
+  ortholog_gene: MG_080
+  ortholog_function: ribonuclease R
+  source: UniProt:P47321
+  identity_pct: 52.9
+
+JCVISYN3A_0370:
+  ortholog_gene: MG_085
+  ortholog_function: aminoacyl-tRNA synthetase
+  source: UniProt:P47325
+  identity_pct: 61.7
+
+JCVISYN3A_0390:
+  ortholog_gene: MG_091
+  ortholog_function: ABC transporter ATP-binding protein
+  source: UniProt:P47330
+  identity_pct: 58.4
+
+JCVISYN3A_0410:
+  ortholog_gene: MG_098
+  ortholog_function: phosphomannomutase
+  source: UniProt:P47336
+  identity_pct: 53.2
+
+JCVISYN3A_0430:
+  ortholog_gene: MG_104
+  ortholog_function: membrane protein insertase YidC
+  source: UniProt:P47341
+  identity_pct: 46.8
+
+JCVISYN3A_0450:
+  ortholog_gene: MG_110
+  ortholog_function: 50S ribosomal protein L4
+  source: UniProt:P47346
+  identity_pct: 72.1
+
+JCVISYN3A_0470:
+  ortholog_gene: MG_118
+  ortholog_function: 50S ribosomal protein L3
+  source: UniProt:P47353
+  identity_pct: 75.3
+
+JCVISYN3A_0490:
+  ortholog_gene: MG_122
+  ortholog_function: translation elongation factor G
+  source: UniProt:P47356
+  identity_pct: 71.8
+
+JCVISYN3A_0510:
+  ortholog_gene: MG_126
+  ortholog_function: 30S ribosomal protein S7
+  source: UniProt:P47359
+  identity_pct: 69.5
+
+JCVISYN3A_0530:
+  ortholog_gene: MG_132
+  ortholog_function: 50S ribosomal protein L6
+  source: UniProt:P47364
+  identity_pct: 66.2
+
+JCVISYN3A_0550:
+  ortholog_gene: MG_142
+  ortholog_function: 50S ribosomal protein L15
+  source: UniProt:P47373
+  identity_pct: 63.7
+
+JCVISYN3A_0570:
+  ortholog_gene: MG_149
+  ortholog_function: adenylate kinase
+  source: UniProt:P47379
+  identity_pct: 68.9
+
+JCVISYN3A_0590:
+  ortholog_gene: MG_155
+  ortholog_function: translation initiation factor IF-2
+  source: UniProt:P47384
+  identity_pct: 60.5
+
+JCVISYN3A_0610:
+  ortholog_gene: MG_170
+  ortholog_function: alanyl-tRNA synthetase
+  source: UniProt:P47397
+  identity_pct: 63.2
+
+JCVISYN3A_0630:
+  ortholog_gene: MG_183
+  ortholog_function: glucose-6-phosphate isomerase
+  source: UniProt:P47408
+  identity_pct: 67.4
+
+JCVISYN3A_0660:
+  ortholog_gene: MG_195
+  ortholog_function: DNA ligase
+  source: UniProt:P47418
+  identity_pct: 58.6
+
+JCVISYN3A_0680:
+  ortholog_gene: MG_198
+  ortholog_function: methionyl-tRNA synthetase
+  source: UniProt:P47421
+  identity_pct: 64.3
+
+JCVISYN3A_0700:
+  ortholog_gene: MG_205
+  ortholog_function: phosphoglycerate mutase
+  source: UniProt:P47427
+  identity_pct: 66.7
+
+JCVISYN3A_0720:
+  ortholog_gene: MG_208
+  ortholog_function: enolase
+  source: UniProt:P47430
+  identity_pct: 75.8
+
+JCVISYN3A_0740:
+  ortholog_gene: MG_215
+  ortholog_function: triosephosphate isomerase
+  source: UniProt:P47436
+  identity_pct: 71.5
+
+JCVISYN3A_0760:
+  ortholog_gene: MG_225
+  ortholog_function: glycerol-3-phosphate dehydrogenase
+  source: UniProt:P47444
+  identity_pct: 62.8
+
+JCVISYN3A_0780:
+  ortholog_gene: MG_231
+  ortholog_function: dihydrofolate reductase
+  source: UniProt:P47449
+  identity_pct: 59.4
+
+JCVISYN3A_0800:
+  ortholog_gene: MG_238
+  ortholog_function: thymidine kinase
+  source: UniProt:P47455
+  identity_pct: 64.1
+
+JCVISYN3A_0820:
+  ortholog_gene: MG_244
+  ortholog_function: ribonucleoside-diphosphate reductase
+  source: UniProt:P47460
+  identity_pct: 57.6
+
+JCVISYN3A_0840:
+  ortholog_gene: MG_250
+  ortholog_function: preprotein translocase SecY
+  source: UniProt:P47465
+  identity_pct: 65.3
+
+JCVISYN3A_0860:
+  ortholog_gene: MG_259
+  ortholog_function: signal peptidase I
+  source: UniProt:P47473
+  identity_pct: 52.1
+
+JCVISYN3A_0880:
+  ortholog_gene: MG_262
+  ortholog_function: proline iminopeptidase
+  source: UniProt:P47476
+  identity_pct: 48.9
+
+JCVISYN3A_0900:
+  ortholog_gene: MG_271
+  ortholog_function: fructose-bisphosphate aldolase
+  source: UniProt:P47483
+  identity_pct: 70.2
+
+JCVISYN3A_0920:
+  ortholog_gene: MG_280
+  ortholog_function: DnaJ-like chaperone
+  source: UniProt:P47490
+  identity_pct: 55.3
+
+JCVISYN3A_0940:
+  ortholog_gene: MG_287
+  ortholog_function: cytidine deaminase
+  source: UniProt:P47496
+  identity_pct: 61.0

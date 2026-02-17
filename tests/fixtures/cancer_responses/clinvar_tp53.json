@@ -1,0 +1,29 @@
+{
+  "esearchresult": {
+    "count": "2",
+    "retmax": "50",
+    "retstart": "0",
+    "idlist": ["12345", "12346"]
+  },
+  "result": {
+    "uids": ["12345", "12346"],
+    "12345": {
+      "uid": "12345",
+      "title": "NM_000546.6(TP53):c.524G>A (p.Arg175His)",
+      "clinical_significance": {"description": "Pathogenic"},
+      "review_status": "reviewed by expert panel",
+      "genes": [{"symbol": "TP53", "geneid": "7157"}],
+      "variation_set": [{"variation_name": "p.Arg175His"}],
+      "trait_set": [{"trait_name": "Li-Fraumeni syndrome"}, {"trait_name": "Breast cancer"}]
+    },
+    "12346": {
+      "uid": "12346",
+      "title": "NM_000546.6(TP53):c.743G>A (p.Arg248Trp)",
+      "clinical_significance": {"description": "Likely pathogenic"},
+      "review_status": "criteria provided, single submitter",
+      "genes": [{"symbol": "TP53", "geneid": "7157"}],
+      "variation_set": [{"variation_name": "p.Arg248Trp"}],
+      "trait_set": [{"trait_name": "Hereditary cancer-predisposing syndrome"}]
+    }
+  }
+}

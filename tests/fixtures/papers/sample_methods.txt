@@ -1,0 +1,53 @@
+## Introduction
+
+Cancer genomics has revolutionized our understanding of tumor biology. Recent advances in
+sequencing technology have enabled comprehensive profiling of somatic mutations across
+diverse tumor types.
+
+## Materials and Methods
+
+### Cell Culture
+
+HeLa cells were maintained in DMEM supplemented with 10% FBS and 1% penicillin-streptomycin
+at 37°C in a humidified incubator with 5% CO2. Cells were passaged every 3 days using
+0.25% trypsin-EDTA and cultured in 10 cm dishes.
+
+### RNA Extraction and RNA-seq
+
+Total RNA was extracted from cultured cells using TRIzol reagent (Invitrogen) according
+to the manufacturer's instructions. RNA quality was assessed using an Agilent 2100
+Bioanalyzer, and samples with RIN > 8 were selected for sequencing.
+
+RNA-seq libraries were prepared using the Illumina TruSeq Stranded mRNA kit with
+500 ng of total RNA input. Libraries were sequenced on the Illumina NovaSeq 6000
+platform, generating 150 bp paired-end reads at a depth of 30 million reads per sample.
+
+### Differential Expression Analysis
+
+Raw sequencing reads were aligned to the human reference genome (GRCh38) using STAR
+v2.7.9a with default parameters. Gene-level counts were generated using featureCounts
+from the Subread package. Differential expression analysis was performed using DESeq2
+v1.34.0 in R. Genes with adjusted p-value < 0.05 and |log2 fold change| > 1 were
+considered differentially expressed.
+
+### Gene Set Enrichment Analysis
+
+GSEA was performed using the fgsea R package with gene sets from MSigDB v7.5.
+Pathways with FDR < 0.25 were considered significantly enriched.
+
+### Western Blot
+
+Protein lysates were prepared in RIPA buffer supplemented with protease inhibitors.
+30 µg of total protein was separated on 10% SDS-PAGE gels and transferred to PVDF
+membranes. Membranes were incubated with primary antibodies at 4°C overnight,
+followed by HRP-conjugated secondary antibodies for 1 hour at room temperature.
+
+### Variant Calling
+
+Somatic variant calling was performed on whole exome sequencing data using GATK
+Mutect2 following GATK best practices. Variants were filtered using FilterMutectCalls
+and annotated using Funcotator.
+
+## Results
+
+We identified 1,247 differentially expressed genes between treatment and control groups.

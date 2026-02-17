@@ -1,0 +1,103 @@
+# Curated literature evidence for JCVI-syn3A genes.
+# Each entry creates a LITERATURE evidence record in the database.
+# Add new papers by appending entries below.
+
+# ---- Pelletier et al. 2021 ----
+# "Genetic requirements for cell division in a genomically minimal cell"
+# Cell 184(9):2430-2440.e16
+# 7 genes necessary & sufficient for normal division morphology in syn3.0;
+# 4 of the 7 are unknown-function genes targeted here.
+
+- locus_tag: JCVISYN3A_0527
+  source_ref: "PMID:33784496"
+  confidence: 0.9
+  payload:
+    title: "Genetic requirements for cell division in a genomically minimal cell"
+    authors: "Pelletier JF, Sun L, Wise KS, et al."
+    year: 2021
+    journal: "Cell"
+    doi: "10.1016/j.cell.2021.03.008"
+    finding: "Required for normal cell morphology; deletion from syn3.0+126 reverts to pleomorphic phenotype"
+    evidence_type: "experimental add-back and deletion"
+    figures: ["Fig 5C", "Fig 5D", "Fig S5"]
+  notes: "One of 7 genes necessary and sufficient to restore normal division morphology in syn3.0"
+
+- locus_tag: JCVISYN3A_0602
+  source_ref: "PMID:33784496"
+  confidence: 0.9
+  payload:
+    title: "Genetic requirements for cell division in a genomically minimal cell"
+    authors: "Pelletier JF, Sun L, Wise KS, et al."
+    year: 2021
+    journal: "Cell"
+    doi: "10.1016/j.cell.2021.03.008"
+    finding: "Part of cluster 6 (genes 602, 604, 605); required for normal cell morphology; deletion from syn3.0+126 reverts to pleomorphic phenotype"
+    evidence_type: "experimental add-back and deletion"
+    figures: ["Fig 5C", "Fig 5D", "Fig S5"]
+  notes: "One of 7 genes necessary and sufficient to restore normal division morphology in syn3.0"
+
+- locus_tag: JCVISYN3A_0604
+  source_ref: "PMID:33784496"
+  confidence: 0.9
+  payload:
+    title: "Genetic requirements for cell division in a genomically minimal cell"
+    authors: "Pelletier JF, Sun L, Wise KS, et al."
+    year: 2021
+    journal: "Cell"
+    doi: "10.1016/j.cell.2021.03.008"
+    finding: "Part of cluster 6 (genes 602, 604, 605); required for normal cell morphology; deletion from syn3.0+126 reverts to pleomorphic phenotype"
+    evidence_type: "experimental add-back and deletion"
+    figures: ["Fig 5C", "Fig 5D", "Fig S5"]
+  notes: "One of 7 genes necessary and sufficient to restore normal division morphology in syn3.0"
+
+- locus_tag: JCVISYN3A_0605
+  source_ref: "PMID:33784496"
+  confidence: 0.9
+  payload:
+    title: "Genetic requirements for cell division in a genomically minimal cell"
+    authors: "Pelletier JF, Sun L, Wise KS, et al."
+    year: 2021
+    journal: "Cell"
+    doi: "10.1016/j.cell.2021.03.008"
+    finding: "Part of cluster 6 (genes 602, 604, 605); required for normal cell morphology; deletion from syn3.0+126 reverts to pleomorphic phenotype"
+    evidence_type: "experimental add-back and deletion"
+    figures: ["Fig 5C", "Fig 5D", "Fig S5"]
+  notes: "One of 7 genes necessary and sufficient to restore normal division morphology in syn3.0"
+
+# ---- Bianchi et al. 2022 ----
+# "Toward the Complete Functional Characterization of a Minimal Bacterial Proteome"
+# J. Phys. Chem. B 126(36):6820-6834
+# AlphaFold2 + FATCAT structural alignment identifies 0239 as EzrA homolog.
+
+- locus_tag: JCVISYN3A_0239
+  source_ref: "PMID:36048731"
+  confidence: 0.85
+  payload:
+    title: "Toward the Complete Functional Characterization of a Minimal Bacterial Proteome"
+    authors: "Bianchi DM, Pelletier JF, Hutchison CA 3rd, Glass JI, Luthey-Schulten Z"
+    year: 2022
+    journal: "J. Phys. Chem. B"
+    doi: "10.1021/acs.jpcb.2c04188"
+    finding: "AlphaFold2 structure of 0239 aligned to B. subtilis EzrA (PDB) via FATCAT; 498/595 residues (84%) well-aligned. Spectrin-like repeats and single TM segment consistent with EzrA architecture. Conserved genomic context: thiL-0239-rpsB matches thiL-ezrA-rpsB synteny in Gram-positive bacteria."
+    evidence_type: "computational structural alignment"
+    methods: ["AlphaFold2", "FATCAT", "HHPred", "genomic context"]
+  notes: "Strongest evidence for EzrA-like FtsZ filament negative regulator assignment. Gene is present in both syn3.0 (JCVISYN3_0239, CP014940.1) and syn3A — it was NOT one of the 19 genes added back."
+
+# ---- Goodsell et al. 2022 ----
+# "Integrative Illustration of a JCVI-syn3A Minimal Cell"
+# J. Integr. Bioinform. 19(4):20220013
+# Speculative placement of 0239 in the divisome complex.
+
+- locus_tag: JCVISYN3A_0239
+  source_ref: "PMID:35749071"
+  confidence: 0.6
+  payload:
+    title: "Integrative Illustration of a JCVI-syn3A Minimal Cell"
+    authors: "Goodsell DS, Vogt M, et al."
+    year: 2022
+    journal: "J. Integr. Bioinform."
+    doi: "10.1515/jib-2022-0013"
+    finding: "Depicted speculatively interacting with FtsZ/FtsA in the divisome, based on predicted single TM segment and spectrin repeats similar to EzrA."
+    evidence_type: "integrative modeling and illustration"
+    methods: ["structural prediction", "integrative illustration"]
+  notes: "Lower confidence — speculative placement based on structural features, not direct experimental evidence. Corroborates Bianchi 2022 EzrA assignment."

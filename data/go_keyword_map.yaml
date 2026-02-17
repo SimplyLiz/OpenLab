@@ -1,0 +1,975 @@
+# Keyword → GO term mappings for evidence normalization
+# Focused on Mycoplasma-relevant functions (minimal genome context)
+# Format: keyword: {go_id, go_name, category}
+#
+# Categories use subcategory notation: "parent:child" for fine-grained scoring
+# e.g. enzyme:glycolysis, enzyme:redox, transporter:abc
+# The convergence scorer weights subcategory matches (1.5) higher than
+# broad parent matches (0.5), so two "enzyme:glycolysis" entries score
+# much higher than "enzyme:glycolysis" vs "enzyme:rna_modification".
+
+# ═══════════════════════════════════════════════════════════════════
+# ENZYMES — with fine-grained subcategories
+# ═══════════════════════════════════════════════════════════════════
+
+# --- Glycolysis / central carbon metabolism ---
+glycolysis:
+  go_id: "GO:0006096"
+  go_name: "glycolytic process"
+  category: enzyme:glycolysis
+phosphofructokinase:
+  go_id: "GO:0003872"
+  go_name: "6-phosphofructokinase activity"
+  category: enzyme:glycolysis
+pyruvate kinase:
+  go_id: "GO:0004743"
+  go_name: "pyruvate kinase activity"
+  category: enzyme:glycolysis
+pyruvate:
+  go_id: "GO:0006090"
+  go_name: "pyruvate metabolic process"
+  category: enzyme:glycolysis
+lactate:
+  go_id: "GO:0019249"
+  go_name: "lactate biosynthetic process"
+  category: enzyme:glycolysis
+lactate dehydrogenase:
+  go_id: "GO:0004459"
+  go_name: "L-lactate dehydrogenase activity"
+  category: enzyme:glycolysis
+enolase:
+  go_id: "GO:0004634"
+  go_name: "phosphopyruvate hydratase activity"
+  category: enzyme:glycolysis
+glyceraldehyde:
+  go_id: "GO:0004365"
+  go_name: "glyceraldehyde-3-phosphate dehydrogenase activity"
+  category: enzyme:glycolysis
+phosphoglycerate:
+  go_id: "GO:0004619"
+  go_name: "phosphoglycerate mutase activity"
+  category: enzyme:glycolysis
+triose-phosphate:
+  go_id: "GO:0004807"
+  go_name: "triose-phosphate isomerase activity"
+  category: enzyme:glycolysis
+fructose-bisphosphate:
+  go_id: "GO:0004332"
+  go_name: "fructose-bisphosphate aldolase activity"
+  category: enzyme:glycolysis
+hexokinase:
+  go_id: "GO:0004396"
+  go_name: "hexokinase activity"
+  category: enzyme:glycolysis
+
+# --- Nucleotide metabolism ---
+nucleotide:
+  go_id: "GO:0009117"
+  go_name: "nucleotide metabolic process"
+  category: enzyme:nucleotide_metabolism
+nucleoside:
+  go_id: "GO:0009116"
+  go_name: "nucleoside metabolic process"
+  category: enzyme:nucleotide_metabolism
+thymidylate:
+  go_id: "GO:0006231"
+  go_name: "dTMP biosynthetic process"
+  category: enzyme:nucleotide_metabolism
+thymidylate synthase:
+  go_id: "GO:0004799"
+  go_name: "thymidylate synthase activity"
+  category: enzyme:nucleotide_metabolism
+thymidylate kinase:
+  go_id: "GO:0004798"
+  go_name: "thymidylate kinase activity"
+  category: enzyme:nucleotide_metabolism
+ribose:
+  go_id: "GO:0019303"
+  go_name: "D-ribose catabolic process"
+  category: enzyme:nucleotide_metabolism
+ribonucleotide:
+  go_id: "GO:0009161"
+  go_name: "ribonucleoside monophosphate metabolic process"
+  category: enzyme:nucleotide_metabolism
+deoxyribonucleotide:
+  go_id: "GO:0009263"
+  go_name: "deoxyribonucleotide biosynthetic process"
+  category: enzyme:nucleotide_metabolism
+deaminase:
+  go_id: "GO:0019239"
+  go_name: "deaminase activity"
+  category: enzyme:nucleotide_metabolism
+cytidine:
+  go_id: "GO:0004126"
+  go_name: "cytidine deaminase activity"
+  category: enzyme:nucleotide_metabolism
+uridine:
+  go_id: "GO:0004850"
+  go_name: "uridine phosphorylase activity"
+  category: enzyme:nucleotide_metabolism
+guanylate:
+  go_id: "GO:0004385"
+  go_name: "guanylate kinase activity"
+  category: enzyme:nucleotide_metabolism
+adenylate:
+  go_id: "GO:0004017"
+  go_name: "adenylate kinase activity"
+  category: enzyme:nucleotide_metabolism
+
+# --- RNA modification ---
+pseudouridine:
+  go_id: "GO:0009982"
+  go_name: "pseudouridine synthase activity"
+  category: enzyme:rna_modification
+rRNA methyltransferase:
+  go_id: "GO:0008649"
+  go_name: "rRNA methyltransferase activity"
+  category: enzyme:rna_modification
+tRNA modification:
+  go_id: "GO:0006400"
+  go_name: "tRNA modification"
+  category: enzyme:rna_modification
+tRNA methyltransferase:
+  go_id: "GO:0008175"
+  go_name: "tRNA methyltransferase activity"
+  category: enzyme:rna_modification
+RNA methyltransferase:
+  go_id: "GO:0008173"
+  go_name: "RNA methyltransferase activity"
+  category: enzyme:rna_modification
+tmRNA:
+  go_id: "GO:0006401"
+  go_name: "RNA catabolic process"
+  category: translation:quality_control
+
+# --- Redox ---
+reductase:
+  go_id: "GO:0016491"
+  go_name: "oxidoreductase activity"
+  category: enzyme:redox
+oxidase:
+  go_id: "GO:0016491"
+  go_name: "oxidoreductase activity"
+  category: enzyme:redox
+dehydrogenase:
+  go_id: "GO:0016491"
+  go_name: "oxidoreductase activity"
+  category: enzyme:redox
+thioredoxin:
+  go_id: "GO:0015035"
+  go_name: "protein disulfide oxidoreductase activity"
+  category: enzyme:redox
+oxidoreductase:
+  go_id: "GO:0016491"
+  go_name: "oxidoreductase activity"
+  category: enzyme:redox
+peroxidase:
+  go_id: "GO:0004601"
+  go_name: "peroxidase activity"
+  category: enzyme:redox
+
+# --- Lipid metabolism ---
+lipase:
+  go_id: "GO:0004806"
+  go_name: "triglyceride lipase activity"
+  category: enzyme:lipid_metabolism
+esterase:
+  go_id: "GO:0016788"
+  go_name: "hydrolase activity, acting on ester bonds"
+  category: enzyme:lipid_metabolism
+acyl:
+  go_id: "GO:0016746"
+  go_name: "acyltransferase activity"
+  category: enzyme:lipid_metabolism
+
+# --- Protein modification ---
+phosphorylation:
+  go_id: "GO:0006468"
+  go_name: "protein phosphorylation"
+  category: enzyme:protein_modification
+methylation:
+  go_id: "GO:0006479"
+  go_name: "protein methylation"
+  category: enzyme:protein_modification
+acetylation:
+  go_id: "GO:0006473"
+  go_name: "protein acetylation"
+  category: enzyme:protein_modification
+glycosylation:
+  go_id: "GO:0006486"
+  go_name: "protein glycosylation"
+  category: enzyme:protein_modification
+
+# --- Protein processing ---
+signal peptidase:
+  go_id: "GO:0008233"
+  go_name: "peptidase activity"
+  category: enzyme:protein_processing
+peptide deformylase:
+  go_id: "GO:0042586"
+  go_name: "peptide deformylase activity"
+  category: enzyme:protein_processing
+methionyl-aminopeptidase:
+  go_id: "GO:0004239"
+  go_name: "methionyl aminopeptidase activity"
+  category: enzyme:protein_processing
+
+# --- Proteases ---
+protease:
+  go_id: "GO:0008233"
+  go_name: "peptidase activity"
+  category: enzyme:protease
+peptidase:
+  go_id: "GO:0008233"
+  go_name: "peptidase activity"
+  category: enzyme:protease
+Lon protease:
+  go_id: "GO:0004176"
+  go_name: "ATP-dependent peptidase activity"
+  category: enzyme:protease
+FtsH:
+  go_id: "GO:0004222"
+  go_name: "metalloendopeptidase activity"
+  category: enzyme:protease
+metalloprotease:
+  go_id: "GO:0004222"
+  go_name: "metalloendopeptidase activity"
+  category: enzyme:protease
+
+# --- Nucleases ---
+nuclease:
+  go_id: "GO:0004518"
+  go_name: "nuclease activity"
+  category: enzyme:nuclease
+endonuclease:
+  go_id: "GO:0004519"
+  go_name: "endonuclease activity"
+  category: enzyme:nuclease
+exonuclease:
+  go_id: "GO:0004527"
+  go_name: "exonuclease activity"
+  category: enzyme:nuclease
+RNase:
+  go_id: "GO:0004540"
+  go_name: "ribonuclease activity"
+  category: enzyme:nuclease
+ribonuclease:
+  go_id: "GO:0004540"
+  go_name: "ribonuclease activity"
+  category: enzyme:nuclease
+phosphodiesterase:
+  go_id: "GO:0004527"
+  go_name: "exonuclease activity"
+  category: enzyme:nuclease
+
+# --- Generic enzyme terms (broad category only) ---
+kinase:
+  go_id: "GO:0016301"
+  go_name: "kinase activity"
+  category: enzyme
+phosphatase:
+  go_id: "GO:0016791"
+  go_name: "phosphatase activity"
+  category: enzyme
+transferase:
+  go_id: "GO:0016740"
+  go_name: "transferase activity"
+  category: enzyme
+hydrolase:
+  go_id: "GO:0016787"
+  go_name: "hydrolase activity"
+  category: enzyme
+synthase:
+  go_id: "GO:0016853"
+  go_name: "isomerase activity"
+  category: enzyme
+synthetase:
+  go_id: "GO:0016874"
+  go_name: "ligase activity"
+  category: enzyme
+ligase:
+  go_id: "GO:0016874"
+  go_name: "ligase activity"
+  category: enzyme
+isomerase:
+  go_id: "GO:0016853"
+  go_name: "isomerase activity"
+  category: enzyme
+mutase:
+  go_id: "GO:0016853"
+  go_name: "isomerase activity"
+  category: enzyme
+lyase:
+  go_id: "GO:0016829"
+  go_name: "lyase activity"
+  category: enzyme
+methyltransferase:
+  go_id: "GO:0008168"
+  go_name: "methyltransferase activity"
+  category: enzyme:rna_modification
+acetyltransferase:
+  go_id: "GO:0016407"
+  go_name: "acetyltransferase activity"
+  category: enzyme
+glycosyltransferase:
+  go_id: "GO:0016757"
+  go_name: "glycosyltransferase activity"
+  category: enzyme
+amidase:
+  go_id: "GO:0016811"
+  go_name: "hydrolase activity, acting on carbon-nitrogen bonds"
+  category: enzyme
+
+# --- DNA replication/topology ---
+helicase:
+  go_id: "GO:0004386"
+  go_name: "helicase activity"
+  category: dna_repair:replication
+topoisomerase:
+  go_id: "GO:0003916"
+  go_name: "DNA topoisomerase activity"
+  category: dna_repair:replication
+gyrase:
+  go_id: "GO:0003916"
+  go_name: "DNA topoisomerase activity"
+  category: dna_repair:replication
+primase:
+  go_id: "GO:0003896"
+  go_name: "DNA primase activity"
+  category: dna_repair:replication
+polymerase:
+  go_id: "GO:0034061"
+  go_name: "DNA polymerase activity"
+  category: dna_repair:replication
+DNA polymerase:
+  go_id: "GO:0034061"
+  go_name: "DNA polymerase activity"
+  category: dna_repair:replication
+DNA replication:
+  go_id: "GO:0006260"
+  go_name: "DNA replication"
+  category: dna_repair:replication
+replication:
+  go_id: "GO:0006260"
+  go_name: "DNA replication"
+  category: dna_repair:replication
+single-stranded DNA:
+  go_id: "GO:0003697"
+  go_name: "single-stranded DNA binding"
+  category: dna_repair:replication
+SSB:
+  go_id: "GO:0003697"
+  go_name: "single-stranded DNA binding"
+  category: dna_repair:replication
+
+# --- DNA repair/recombination ---
+DNA binding:
+  go_id: "GO:0003677"
+  go_name: "DNA binding"
+  category: dna_repair
+DNA repair:
+  go_id: "GO:0006281"
+  go_name: "DNA repair"
+  category: dna_repair:recombination
+recombination:
+  go_id: "GO:0006310"
+  go_name: "DNA recombination"
+  category: dna_repair:recombination
+recombinase:
+  go_id: "GO:0000150"
+  go_name: "recombinase activity"
+  category: dna_repair:recombination
+uvrA:
+  go_id: "GO:0009381"
+  go_name: "excinuclease ABC activity"
+  category: dna_repair:recombination
+uvrB:
+  go_id: "GO:0009381"
+  go_name: "excinuclease ABC activity"
+  category: dna_repair:recombination
+uvrC:
+  go_id: "GO:0009381"
+  go_name: "excinuclease ABC activity"
+  category: dna_repair:recombination
+excision repair:
+  go_id: "GO:0006289"
+  go_name: "nucleotide-excision repair"
+  category: dna_repair:recombination
+
+# --- Restriction-modification ---
+restriction:
+  go_id: "GO:0009307"
+  go_name: "DNA restriction-modification system"
+  category: dna_repair:restriction_modification
+specificity subunit:
+  go_id: "GO:0009307"
+  go_name: "DNA restriction-modification system"
+  category: dna_repair:restriction_modification
+type II restriction:
+  go_id: "GO:0009307"
+  go_name: "DNA restriction-modification system"
+  category: dna_repair:restriction_modification
+
+# ═══════════════════════════════════════════════════════════════════
+# TRANSPORTERS — with subcategories
+# ═══════════════════════════════════════════════════════════════════
+
+transporter:
+  go_id: "GO:0005215"
+  go_name: "transporter activity"
+  category: transporter
+permease:
+  go_id: "GO:0005215"
+  go_name: "transporter activity"
+  category: transporter
+
+# --- ABC transporters ---
+ABC transport:
+  go_id: "GO:0042626"
+  go_name: "ATPase-coupled transmembrane transporter activity"
+  category: transporter:abc
+ABC transporter:
+  go_id: "GO:0042626"
+  go_name: "ATPase-coupled transmembrane transporter activity"
+  category: transporter:abc
+
+# --- ECF transporters ---
+ECF transporter:
+  go_id: "GO:0005215"
+  go_name: "transporter activity"
+  category: transporter:ecf
+energy-coupling factor:
+  go_id: "GO:0005215"
+  go_name: "transporter activity"
+  category: transporter:ecf
+
+# --- Ion transport ---
+channel:
+  go_id: "GO:0015267"
+  go_name: "channel activity"
+  category: transporter:ion
+antiporter:
+  go_id: "GO:0015297"
+  go_name: "antiporter activity"
+  category: transporter:ion
+symporter:
+  go_id: "GO:0015293"
+  go_name: "symporter activity"
+  category: transporter:ion
+cobalt:
+  go_id: "GO:0006824"
+  go_name: "cobalt ion transport"
+  category: transporter:ion
+magnesium:
+  go_id: "GO:0015095"
+  go_name: "magnesium ion transmembrane transporter activity"
+  category: transporter:ion
+
+# --- Nutrient transport ---
+oligopeptide:
+  go_id: "GO:0006857"
+  go_name: "oligopeptide transport"
+  category: transporter:peptide
+dipeptide:
+  go_id: "GO:0042938"
+  go_name: "dipeptide transport"
+  category: transporter:peptide
+spermidine:
+  go_id: "GO:0015846"
+  go_name: "polyamine transport"
+  category: transporter:polyamine
+putrescine:
+  go_id: "GO:0015846"
+  go_name: "polyamine transport"
+  category: transporter:polyamine
+
+# --- Efflux/pumps ---
+pump:
+  go_id: "GO:0042626"
+  go_name: "ATPase-coupled transmembrane transporter activity"
+  category: transporter:efflux
+efflux:
+  go_id: "GO:0022857"
+  go_name: "transmembrane transporter activity"
+  category: transporter:efflux
+porin:
+  go_id: "GO:0015288"
+  go_name: "porin activity"
+  category: transporter
+uptake:
+  go_id: "GO:0005215"
+  go_name: "transporter activity"
+  category: transporter
+import:
+  go_id: "GO:0005215"
+  go_name: "transporter activity"
+  category: transporter
+export:
+  go_id: "GO:0015562"
+  go_name: "efflux transmembrane transporter activity"
+  category: transporter:efflux
+PTS:
+  go_id: "GO:0008982"
+  go_name: "protein-N(PI)-phosphohistidine-sugar phosphotransferase activity"
+  category: transporter
+
+# --- Secretion ---
+secretion:
+  go_id: "GO:0009306"
+  go_name: "protein secretion"
+  category: transporter:secretion
+signal peptide:
+  go_id: "GO:0006605"
+  go_name: "protein targeting"
+  category: transporter:secretion
+sec:
+  go_id: "GO:0015450"
+  go_name: "P-P-bond-hydrolysis-driven protein transmembrane transporter activity"
+  category: transporter:secretion
+signal recognition:
+  go_id: "GO:0006614"
+  go_name: "SRP-dependent cotranslational protein targeting to membrane"
+  category: transporter:secretion
+SecA:
+  go_id: "GO:0015450"
+  go_name: "P-P-bond-hydrolysis-driven protein transmembrane transporter activity"
+  category: transporter:secretion
+SecY:
+  go_id: "GO:0015450"
+  go_name: "P-P-bond-hydrolysis-driven protein transmembrane transporter activity"
+  category: transporter:secretion
+YidC:
+  go_id: "GO:0015450"
+  go_name: "P-P-bond-hydrolysis-driven protein transmembrane transporter activity"
+  category: transporter:secretion
+Ffh:
+  go_id: "GO:0006614"
+  go_name: "SRP-dependent cotranslational protein targeting to membrane"
+  category: transporter:secretion
+FtsY:
+  go_id: "GO:0006614"
+  go_name: "SRP-dependent cotranslational protein targeting to membrane"
+  category: transporter:secretion
+
+# ═══════════════════════════════════════════════════════════════════
+# TRANSLATION — with subcategories
+# ═══════════════════════════════════════════════════════════════════
+
+translation:
+  go_id: "GO:0006412"
+  go_name: "translation"
+  category: translation
+
+# --- Ribosome ---
+ribosome:
+  go_id: "GO:0003735"
+  go_name: "structural constituent of ribosome"
+  category: translation:ribosome
+ribosomal:
+  go_id: "GO:0003735"
+  go_name: "structural constituent of ribosome"
+  category: translation:ribosome
+30S:
+  go_id: "GO:0015935"
+  go_name: "small ribosomal subunit"
+  category: translation:ribosome
+50S:
+  go_id: "GO:0015934"
+  go_name: "large ribosomal subunit"
+  category: translation:ribosome
+ribosome maturation:
+  go_id: "GO:0042274"
+  go_name: "ribosomal small subunit biogenesis"
+  category: translation:ribosome
+
+# --- tRNA ---
+tRNA:
+  go_id: "GO:0004812"
+  go_name: "aminoacyl-tRNA ligase activity"
+  category: translation:trna
+aminoacyl:
+  go_id: "GO:0004812"
+  go_name: "aminoacyl-tRNA ligase activity"
+  category: translation:trna
+tRNA ligase:
+  go_id: "GO:0004812"
+  go_name: "aminoacyl-tRNA ligase activity"
+  category: translation:trna
+tRNA synthetase:
+  go_id: "GO:0004812"
+  go_name: "aminoacyl-tRNA ligase activity"
+  category: translation:trna
+
+# --- Translation factors ---
+elongation factor:
+  go_id: "GO:0003746"
+  go_name: "translation elongation factor activity"
+  category: translation:factors
+initiation factor:
+  go_id: "GO:0003743"
+  go_name: "translation initiation factor activity"
+  category: translation:factors
+release factor:
+  go_id: "GO:0003747"
+  go_name: "translation release factor activity"
+  category: translation:factors
+
+# ═══════════════════════════════════════════════════════════════════
+# TRANSCRIPTION
+# ═══════════════════════════════════════════════════════════════════
+
+DNA-directed RNA polymerase:
+  go_id: "GO:0003899"
+  go_name: "DNA-directed 5'-3' RNA polymerase activity"
+  category: transcription
+RNA polymerase:
+  go_id: "GO:0003899"
+  go_name: "DNA-directed 5'-3' RNA polymerase activity"
+  category: transcription
+sigma factor:
+  go_id: "GO:0016987"
+  go_name: "sigma factor activity"
+  category: transcription
+transcription:
+  go_id: "GO:0006351"
+  go_name: "transcription, DNA-templated"
+  category: transcription
+transcription factor:
+  go_id: "GO:0003700"
+  go_name: "DNA-binding transcription factor activity"
+  category: regulatory
+
+# ═══════════════════════════════════════════════════════════════════
+# REGULATORY
+# ═══════════════════════════════════════════════════════════════════
+
+regulator:
+  go_id: "GO:0065007"
+  go_name: "biological regulation"
+  category: regulatory
+repressor:
+  go_id: "GO:0001227"
+  go_name: "DNA-binding transcription repressor activity"
+  category: regulatory
+activator:
+  go_id: "GO:0001228"
+  go_name: "DNA-binding transcription activator activity"
+  category: regulatory
+response regulator:
+  go_id: "GO:0000156"
+  go_name: "phosphorelay response regulator activity"
+  category: regulatory
+sensor:
+  go_id: "GO:0000155"
+  go_name: "phosphorelay sensor kinase activity"
+  category: regulatory
+signal:
+  go_id: "GO:0007165"
+  go_name: "signal transduction"
+  category: regulatory
+two-component:
+  go_id: "GO:0000160"
+  go_name: "phosphorelay signal transduction system"
+  category: regulatory
+
+# ═══════════════════════════════════════════════════════════════════
+# CELL DIVISION
+# ═══════════════════════════════════════════════════════════════════
+
+cell division:
+  go_id: "GO:0051301"
+  go_name: "cell division"
+  category: cell_division
+ftsZ:
+  go_id: "GO:0000917"
+  go_name: "division septum assembly"
+  category: cell_division
+septation:
+  go_id: "GO:0000917"
+  go_name: "division septum assembly"
+  category: cell_division
+divisome:
+  go_id: "GO:0032153"
+  go_name: "cell division site"
+  category: cell_division
+cytokinesis:
+  go_id: "GO:0000910"
+  go_name: "cytokinesis"
+  category: cell_division
+MraZ:
+  go_id: "GO:0051301"
+  go_name: "cell division"
+  category: cell_division
+MraW:
+  go_id: "GO:0051301"
+  go_name: "cell division"
+  category: cell_division
+
+# ═══════════════════════════════════════════════════════════════════
+# MEMBRANE / LIPID BIOGENESIS
+# ═══════════════════════════════════════════════════════════════════
+
+membrane:
+  go_id: "GO:0016020"
+  go_name: "membrane"
+  category: membrane_biogenesis
+lipid:
+  go_id: "GO:0006629"
+  go_name: "lipid metabolic process"
+  category: membrane_biogenesis
+fatty acid:
+  go_id: "GO:0006631"
+  go_name: "fatty acid metabolic process"
+  category: membrane_biogenesis
+lipoprotein:
+  go_id: "GO:0042158"
+  go_name: "lipoprotein biosynthetic process"
+  category: membrane_biogenesis
+phospholipid:
+  go_id: "GO:0006644"
+  go_name: "phospholipid metabolic process"
+  category: membrane_biogenesis
+glycolipid:
+  go_id: "GO:0006664"
+  go_name: "glycolipid metabolic process"
+  category: membrane_biogenesis
+integral membrane:
+  go_id: "GO:0016020"
+  go_name: "membrane"
+  category: membrane_biogenesis
+cardiolipin:
+  go_id: "GO:0032049"
+  go_name: "cardiolipin biosynthetic process"
+  category: membrane_biogenesis
+phosphatidylglycerol:
+  go_id: "GO:0046474"
+  go_name: "glycerophospholipid biosynthetic process"
+  category: membrane_biogenesis
+diacylglycerol:
+  go_id: "GO:0046460"
+  go_name: "neutral lipid biosynthetic process"
+  category: membrane_biogenesis
+glycerophospholipid:
+  go_id: "GO:0046474"
+  go_name: "glycerophospholipid biosynthetic process"
+  category: membrane_biogenesis
+
+# ═══════════════════════════════════════════════════════════════════
+# STRUCTURAL
+# ═══════════════════════════════════════════════════════════════════
+
+structural:
+  go_id: "GO:0005198"
+  go_name: "structural molecule activity"
+  category: structural
+scaffold:
+  go_id: "GO:0005198"
+  go_name: "structural molecule activity"
+  category: structural
+cytoskeleton:
+  go_id: "GO:0005856"
+  go_name: "cytoskeleton"
+  category: structural
+adhesin:
+  go_id: "GO:0007155"
+  go_name: "cell adhesion"
+  category: structural
+attachment:
+  go_id: "GO:0007155"
+  go_name: "cell adhesion"
+  category: structural
+cytadherence:
+  go_id: "GO:0007155"
+  go_name: "cell adhesion"
+  category: structural
+
+# ═══════════════════════════════════════════════════════════════════
+# PROTEIN FOLDING / CHAPERONES
+# ═══════════════════════════════════════════════════════════════════
+
+chaperone:
+  go_id: "GO:0006457"
+  go_name: "protein folding"
+  category: enzyme:chaperone
+chaperonin:
+  go_id: "GO:0006457"
+  go_name: "protein folding"
+  category: enzyme:chaperone
+DnaK:
+  go_id: "GO:0051082"
+  go_name: "unfolded protein binding"
+  category: enzyme:chaperone
+DnaJ:
+  go_id: "GO:0051082"
+  go_name: "unfolded protein binding"
+  category: enzyme:chaperone
+GroEL:
+  go_id: "GO:0006457"
+  go_name: "protein folding"
+  category: enzyme:chaperone
+GroES:
+  go_id: "GO:0006457"
+  go_name: "protein folding"
+  category: enzyme:chaperone
+heat shock:
+  go_id: "GO:0009408"
+  go_name: "response to heat"
+  category: enzyme:chaperone
+proteasome:
+  go_id: "GO:0004298"
+  go_name: "threonine-type endopeptidase activity"
+  category: enzyme:protease
+
+# ═══════════════════════════════════════════════════════════════════
+# COFACTORS
+# ═══════════════════════════════════════════════════════════════════
+
+NAD:
+  go_id: "GO:0003954"
+  go_name: "NADH dehydrogenase activity"
+  category: enzyme:redox
+NADH:
+  go_id: "GO:0003954"
+  go_name: "NADH dehydrogenase activity"
+  category: enzyme:redox
+FAD:
+  go_id: "GO:0071949"
+  go_name: "FAD binding"
+  category: enzyme:redox
+CoA:
+  go_id: "GO:0003824"
+  go_name: "catalytic activity"
+  category: enzyme
+ATP binding:
+  go_id: "GO:0005524"
+  go_name: "ATP binding"
+  category: enzyme
+GTP binding:
+  go_id: "GO:0005525"
+  go_name: "GTP binding"
+  category: enzyme
+ATPase:
+  go_id: "GO:0016887"
+  go_name: "ATPase activity"
+  category: enzyme
+GTPase:
+  go_id: "GO:0003924"
+  go_name: "GTPase activity"
+  category: enzyme
+
+# ═══════════════════════════════════════════════════════════════════
+# MOBILE ELEMENTS
+# ═══════════════════════════════════════════════════════════════════
+
+integrase:
+  go_id: "GO:0015074"
+  go_name: "DNA integration"
+  category: dna_repair:mobile_element
+transposase:
+  go_id: "GO:0004803"
+  go_name: "transposase activity"
+  category: dna_repair:mobile_element
+
+# ═══════════════════════════════════════════════════════════════════
+# METAL BINDING
+# ═══════════════════════════════════════════════════════════════════
+
+zinc:
+  go_id: "GO:0008270"
+  go_name: "zinc ion binding"
+  category: enzyme
+metal-dependent:
+  go_id: "GO:0046872"
+  go_name: "metal ion binding"
+  category: enzyme
+zinc finger:
+  go_id: "GO:0008270"
+  go_name: "zinc ion binding"
+  category: enzyme
+
+# ═══════════════════════════════════════════════════════════════════
+# MYCOPLASMA-SPECIFIC PROTEIN NAMES
+# ═══════════════════════════════════════════════════════════════════
+
+# Known Mycoplasma proteins that appear in evidence but have generic names
+scpA:
+  go_id: "GO:0007049"
+  go_name: "cell cycle"
+  category: cell_division
+scpB:
+  go_id: "GO:0007049"
+  go_name: "cell cycle"
+  category: cell_division
+obg:
+  go_id: "GO:0003924"
+  go_name: "GTPase activity"
+  category: enzyme
+era:
+  go_id: "GO:0003924"
+  go_name: "GTPase activity"
+  category: enzyme
+engA:
+  go_id: "GO:0003924"
+  go_name: "GTPase activity"
+  category: enzyme
+
+# ═══════════════════════════════════════════════════════════════════
+# COG FUNCTIONAL CATEGORIES (eggNOG output)
+# ═══════════════════════════════════════════════════════════════════
+
+# Note: COG category letters are mapped directly in evidence_normalizer.py
+# via COG_CATEGORIES dict. These entries catch COG category *descriptions*
+# that appear in og_description or predicted_name fields.
+
+information storage:
+  go_id: "GO:0006260"
+  go_name: "DNA replication"
+  category: dna_repair:replication
+chromatin:
+  go_id: "GO:0006325"
+  go_name: "chromatin organization"
+  category: dna_repair:replication
+coenzyme transport:
+  go_id: "GO:0006732"
+  go_name: "coenzyme metabolic process"
+  category: enzyme:coenzyme_metabolism
+secondary metabolite:
+  go_id: "GO:0019748"
+  go_name: "secondary metabolic process"
+  category: enzyme:secondary_metabolism
+signal transduction:
+  go_id: "GO:0007165"
+  go_name: "signal transduction"
+  category: signal_transduction
+cell wall:
+  go_id: "GO:0009273"
+  go_name: "peptidoglycan-based cell wall biogenesis"
+  category: membrane_biogenesis
+intracellular trafficking:
+  go_id: "GO:0016192"
+  go_name: "vesicle-mediated transport"
+  category: transporter:secretion
+posttranslational modification:
+  go_id: "GO:0006464"
+  go_name: "cellular protein modification process"
+  category: enzyme:chaperone
+energy production:
+  go_id: "GO:0006091"
+  go_name: "generation of precursor metabolites and energy"
+  category: enzyme:energy_metabolism
+carbohydrate transport:
+  go_id: "GO:0008643"
+  go_name: "carbohydrate transport"
+  category: transporter
+amino acid transport:
+  go_id: "GO:0006865"
+  go_name: "amino acid transport"
+  category: transporter
+nucleotide transport:
+  go_id: "GO:0015858"
+  go_name: "nucleoside transport"
+  category: transporter
+inorganic ion transport:
+  go_id: "GO:0006811"
+  go_name: "ion transport"
+  category: transporter:ion

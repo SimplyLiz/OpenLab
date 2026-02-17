@@ -1,0 +1,13 @@
+##fileformat=VCFv4.2
+##source=OpenLabTestSuite
+##reference=GRCh38
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene symbol">
+##FILTER=<ID=PASS,Description="All filters passed">
+##contig=<ID=chr7,length=159345973>
+##contig=<ID=chr17,length=83257441>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr7	140753336	rs113488022	A	T	100	PASS	GENE=BRAF
+chr17	7674220	rs28934578	C	T	95	PASS	GENE=TP53
+chr17	7673802	rs121912651	G	A	90	PASS	GENE=TP53
+chr7	55191822	rs121434568	T	G	85	PASS	GENE=EGFR
+chr7	140753337	.	AT	A	80	PASS	GENE=BRAF

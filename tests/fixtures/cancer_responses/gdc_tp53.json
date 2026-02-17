@@ -1,0 +1,41 @@
+{
+  "data": {
+    "hits": [
+      {
+        "ssm_id": "ssm_001",
+        "genomic_dna_change": "chr17:g.7674220C>T",
+        "consequence": [
+          {
+            "transcript": {
+              "gene": {"symbol": "TP53"},
+              "consequence_type": "missense_variant",
+              "aa_change": "R175H"
+            }
+          }
+        ],
+        "occurrence": [
+          {"case": {"project": {"project_id": "TCGA-BRCA"}}},
+          {"case": {"project": {"project_id": "TCGA-COAD"}}},
+          {"case": {"project": {"project_id": "TCGA-LUAD"}}}
+        ]
+      },
+      {
+        "ssm_id": "ssm_002",
+        "genomic_dna_change": "chr17:g.7673802G>A",
+        "consequence": [
+          {
+            "transcript": {
+              "gene": {"symbol": "TP53"},
+              "consequence_type": "stop_gained",
+              "aa_change": "R213*"
+            }
+          }
+        ],
+        "occurrence": [
+          {"case": {"project": {"project_id": "TCGA-BRCA"}}}
+        ]
+      }
+    ],
+    "pagination": {"count": 2, "total": 2}
+  }
+}

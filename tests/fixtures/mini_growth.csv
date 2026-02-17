@@ -1,0 +1,13 @@
+strain,time_h,od600,replicate
+JCVISYN3A_0001_ko,0,0.05,1
+JCVISYN3A_0001_ko,2,0.08,1
+JCVISYN3A_0001_ko,4,0.15,1
+JCVISYN3A_0001_ko,6,0.22,1
+wild_type,0,0.05,1
+wild_type,2,0.12,1
+wild_type,4,0.35,1
+wild_type,6,0.65,1
+wild_type,0,0.06,2
+wild_type,2,0.11,2
+wild_type,4,0.33,2
+wild_type,6,0.62,2
