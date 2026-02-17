@@ -1,26 +1,27 @@
 """openlab dossier — generate gene research dossiers."""
 
 import asyncio
-import sys
 from pathlib import Path
 
 import typer
 from rich.console import Console
-from rich.live import Live
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-app = typer.Typer(no_args_is_help=True)
 console = Console()
 
 
-@app.command("generate")
-@app.callback(invoke_without_command=True)
 def generate(
     gene_symbol: str = typer.Argument(..., help="Gene symbol (e.g., TP53, BRAF)"),
-    cancer: str = typer.Option(None, "--cancer", "-c", help="Cancer type (e.g., colorectal, breast)"),
-    output: Path = typer.Option(None, "--output", "-o", help="Output file path"),
-    format: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown or json"),
+    cancer: str = typer.Option(
+        None, "--cancer", "-c", help="Cancer type (e.g., colorectal, breast)",
+    ),
+    output: Path = typer.Option(
+        None, "--output", "-o", help="Output file path",
+    ),
+    format: str = typer.Option(
+        "markdown", "--format", "-f", help="Output format: markdown or json",
+    ),
     no_critic: bool = typer.Option(False, "--no-critic", help="Skip critic validation"),
 ):
     """Generate a gene dossier with cited cancer research."""
@@ -34,14 +35,13 @@ async def _run_dossier(
     fmt: str,
     no_critic: bool,
 ) -> None:
-    from openlab.agents.agent_models import AgentEventType, GeneDossier
+    from openlab.agents.agent_models import AgentEventType
     from openlab.agents.runner import run_dossier_agent
-    from openlab.agents.reporter import render_markdown, render_json
 
-    console.print(f"\n[bold]Generating dossier for [cyan]{gene_symbol}[/cyan]", end="")
+    header = f"Generating dossier for [cyan]{gene_symbol}[/cyan]"
     if cancer_type:
-        console.print(f" ([yellow]{cancer_type}[/yellow] cancer)", end="")
-    console.print("[/bold]\n")
+        header += f" ([yellow]{cancer_type}[/yellow] cancer)"
+    console.print(f"\n[bold]{header}[/bold]\n")
 
     dossier_data: dict = {}
 
