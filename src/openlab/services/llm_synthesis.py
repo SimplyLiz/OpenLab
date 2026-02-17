@@ -129,7 +129,7 @@ def _resolve_provider() -> str:
 
     Strategy: prefer ollama when available (free, local), fall back to cloud.
     """
-    preferred = config.llm.provider.lower()
+    preferred: str = config.llm.provider.lower()
 
     # Explicit preference is always honored
     if preferred == "anthropic" and config.llm.anthropic_api_key:
@@ -228,7 +228,7 @@ def _get_ollama_model() -> str:
         if resp.status_code == 200:
             models = resp.json().get("models", [])
             if models:
-                return models[0].get("name", "")
+                return str(models[0].get("name", ""))
     except Exception:
         pass
     return ""
@@ -245,7 +245,7 @@ def _model_for_provider(provider: str) -> str:
     If the user explicitly configured a model that matches the provider, use it.
     Otherwise fall back to a good default for that provider.
     """
-    m = config.llm.model
+    m: str = config.llm.model
     if provider == "anthropic":
         return m if "claude" in m else "claude-sonnet-4-5-20250929"
     elif provider == "openai":
@@ -306,7 +306,7 @@ async def _anthropic(
         )
     except Exception:
         logger.debug("Usage logging failed for Anthropic call", exc_info=True)
-    return data["content"][0]["text"]
+    return str(data["content"][0]["text"])
 
 
 async def _openai_compatible(
@@ -356,7 +356,7 @@ async def _openai_compatible(
         )
     except Exception:
         logger.debug(f"Usage logging failed for {provider_name} call", exc_info=True)
-    return data["choices"][0]["message"]["content"]
+    return str(data["choices"][0]["message"]["content"])
 
 
 async def _openai(
@@ -452,4 +452,4 @@ async def _ollama(
         )
     except Exception:
         logger.debug("Usage logging failed for Ollama call", exc_info=True)
-    return data.get("response", "")
+    return str(data.get("response", ""))

@@ -137,7 +137,10 @@ def _build_config() -> AppConfig:
         llm=LLMConfig(
             provider=os.environ.get("LLM_PROVIDER", "anthropic"),
             model=os.environ.get("LLM_MODEL", "claude-sonnet-4-5-20250929"),
-            anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", "") or os.environ.get("CLAUDE_API_KEY", ""),
+            anthropic_api_key=(
+                os.environ.get("ANTHROPIC_API_KEY", "")
+                or os.environ.get("CLAUDE_API_KEY", "")
+            ),
             openai_api_key=os.environ.get("OPENAI_API_KEY", ""),
             gemini_api_key=os.environ.get("GEMINI_API_KEY", ""),
             grok_api_key=os.environ.get("GROK_API_KEY", ""),

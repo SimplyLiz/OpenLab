@@ -39,7 +39,7 @@ def _get_ollama_model() -> str:
         if resp.status_code == 200:
             models = resp.json().get("models", [])
             if models:
-                return models[0].get("name", "")
+                return str(models[0].get("name", ""))
     except Exception:
         pass
     return ""
@@ -47,7 +47,7 @@ def _get_ollama_model() -> str:
 
 def _model_for_provider(provider: str) -> str:
     """Return the right model name for the provider."""
-    m = settings.llm_model
+    m: str = settings.llm_model
     cloud_markers = ("claude", "gpt", "o1-", "o3-", "gemini", "grok")
     if provider == "anthropic":
         return m if "claude" in m else "claude-sonnet-4-5-20250929"
@@ -68,7 +68,7 @@ def _model_for_provider(provider: str) -> str:
 
 def _resolve_provider() -> str:
     """Pick the best available provider. Prefers ollama when running (free)."""
-    preferred = settings.llm_provider.lower()
+    preferred: str = settings.llm_provider.lower()
 
     # Explicit preference honored
     if preferred == "anthropic" and settings.anthropic_api_key:
@@ -204,7 +204,7 @@ def _anthropic(
         )
     except Exception:
         logger.debug("Usage logging failed for Anthropic call", exc_info=True)
-    return data["content"][0]["text"]
+    return str(data["content"][0]["text"])
 
 
 def _openai_compatible(
@@ -253,7 +253,7 @@ def _openai_compatible(
         )
     except Exception:
         logger.debug(f"Usage logging failed for {provider_name} call", exc_info=True)
-    return data["choices"][0]["message"]["content"]
+    return str(data["choices"][0]["message"]["content"])
 
 
 def _gemini(
@@ -327,4 +327,4 @@ def _ollama(
         )
     except Exception:
         logger.debug("Usage logging failed for Ollama call", exc_info=True)
-    return data.get("response", "")
+    return str(data.get("response", ""))
