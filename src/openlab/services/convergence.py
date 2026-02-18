@@ -13,8 +13,7 @@ from __future__ import annotations
 import random
 from typing import Any
 
-from openlab.services.evidence_normalizer import NormalizedEvidence, normalize_evidence, normalize_payload
-
+from openlab.services.evidence_normalizer import NormalizedEvidence, normalize_evidence
 
 # Source-specific weights for convergence scoring.
 # Function-predicting sources get high weight; context/noise sources get low.
@@ -38,6 +37,10 @@ CONVERGENCE_SOURCE_WEIGHTS: dict[str, float] = {
     "signalp": 0.1,
     "alphafold": 0.3,
     "protein_features": 0.3,
+    # Gene identity sources (from dossier agent retrieval)
+    "ncbi": 1.5,
+    "ensembl": 0.5,
+    "ensembl_havana": 0.5,
     # Cancer evidence sources
     "clinvar": 1.8,
     "cosmic": 2.0,

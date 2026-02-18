@@ -83,7 +83,7 @@ async def run_dossier_agent(
             retrieve_literature,
         )
 
-        identity, id_call_ids = await asyncio.wait_for(
+        identity, id_call_ids, identity_sources = await asyncio.wait_for(
             retrieve_gene_identity(tools, gene_symbol),
             timeout=timeout,
         )
@@ -144,10 +144,22 @@ async def run_dossier_agent(
         )
 
         # Phase 4: Convergence scoring
-        all_evidence = existing_evidence + [
-            {"source": "literature", "title": a.get("title", "")}
-            for a in articles[:10]
+        # Map identity data into normalizer-friendly format so GO terms,
+        # protein names, and descriptions drive real convergence
+        all_evidence: list[dict[str, Any]] = [
+            _normalize_identity_for_convergence(src) for src in identity_sources
         ]
+        # Flatten DB evidence: the normalizer needs payload fields at top level
+        for ev in existing_evidence:
+            flat: dict[str, Any] = {"source": ev.get("source_ref", "database")}
+            flat.update(ev.get("payload", {}))
+            all_evidence.append(flat)
+        # Literature items: map title → description so normalizer's keyword extraction fires
+        for a in articles[:10]:
+            if a.get("title"):
+                all_evidence.append(
+                    {"source": "literature", "description": a["title"]}
+                )
         conv_result = await tools.call("convergence_score", {"evidence_list": all_evidence})
         convergence = conv_result.data.get("convergence_score", 0.0) if conv_result.success else 0.0
 
@@ -275,6 +287,7 @@ async def run_dossier_agent(
                 "convergence_score": dossier.convergence_score,
                 "total_tool_calls": ledger.total_calls(),
                 "total_duration_ms": ledger.total_duration_ms(),
+                "dossier": dossier,
             },
             progress=1.0,
             run_id=run_id,
@@ -298,3 +311,65 @@ async def run_dossier_agent(
     finally:
         if own_http and http is not None:
             await http.aclose()
+
+
+def _normalize_identity_for_convergence(src: dict[str, Any]) -> dict[str, Any]:
+    """Map raw identity source data into fields the evidence normalizer handles.
+
+    NCBI returns 'name'/'summary', Ensembl returns 'description',
+    UniProt returns deeply nested JSON. This adapter bridges the gap.
+    """
+    ev: dict[str, Any] = {"source": src.get("source", "identity")}
+
+    # Description: combine all text fields for richer keyword extraction
+    desc_parts = [
+        src.get("description", ""),
+        src.get("name", ""),
+        src.get("summary", ""),
+    ]
+    desc = " ".join(p for p in desc_parts if p)
+    if desc:
+        ev["description"] = desc
+
+    # Protein name from UniProt nested structure
+    prot_desc = src.get("proteinDescription", {})
+    if isinstance(prot_desc, dict):
+        rec_name = prot_desc.get("recommendedName", {})
+        if isinstance(rec_name, dict):
+            full_name = rec_name.get("fullName", {})
+            if isinstance(full_name, dict) and full_name.get("value"):
+                ev["protein_name"] = full_name["value"]
+            # EC numbers from UniProt
+            ec_nums = rec_name.get("ecNumbers", [])
+            if ec_nums:
+                ev["ec_numbers"] = [
+                    e.get("value", "") for e in ec_nums if isinstance(e, dict)
+                ]
+
+    # GO terms from UniProt cross-references
+    go_terms = []
+    for ref in src.get("uniProtKBCrossReferences", []):
+        if isinstance(ref, dict) and ref.get("database") == "GO":
+            go_id = ref.get("id", "")
+            if go_id:
+                props = {
+                    p["key"]: p["value"]
+                    for p in ref.get("properties", [])
+                    if isinstance(p, dict)
+                }
+                go_terms.append({
+                    "id": go_id,
+                    "description": props.get("GoTerm", ""),
+                })
+    if go_terms:
+        ev["go_terms"] = go_terms
+
+    # Function from UniProt comments
+    for comment in src.get("comments", []):
+        if isinstance(comment, dict) and comment.get("commentType") == "FUNCTION":
+            texts = comment.get("texts", [])
+            if texts and isinstance(texts[0], dict):
+                ev["function"] = texts[0].get("value", "")
+                break
+
+    return ev

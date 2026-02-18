@@ -1,6 +1,7 @@
 """openlab dossier — generate gene research dossiers."""
 
 import asyncio
+import json
 from pathlib import Path
 
 import typer
@@ -44,6 +45,7 @@ async def _run_dossier(
     console.print(f"\n[bold]{header}[/bold]\n")
 
     dossier_data: dict = {}
+    dossier_obj = None
 
     with Progress(
         SpinnerColumn(),
@@ -75,6 +77,7 @@ async def _run_dossier(
                 )
             elif event.event_type == AgentEventType.DOSSIER_COMPLETED:
                 dossier_data = event.data
+                dossier_obj = event.data.get("dossier")
                 progress.update(task, description="Dossier complete!")
             elif event.event_type == AgentEventType.RUN_FAILED:
                 console.print(f"\n[red]Error: {event.error}[/red]")
@@ -95,8 +98,23 @@ async def _run_dossier(
         title="Summary",
     ))
 
-    # For actual output rendering, we'd need the full dossier object
-    # The streaming approach gives us events, not the final object
-    # In production, the runner would also persist the dossier
+    if dossier_obj is None:
+        if output:
+            console.print("[yellow]Dossier object not available for file output.[/yellow]")
+        return
+
+    # Render and optionally write to file
+    from openlab.agents.reporter import render_json, render_markdown
+
+    if fmt == "json":
+        rendered = json.dumps(render_json(dossier_obj), indent=2, default=str)
+    else:
+        rendered = render_markdown(dossier_obj)
+
     if output:
-        console.print(f"\n[dim]Output would be written to {output}[/dim]")
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(rendered, encoding="utf-8")
+        console.print(f"\nDossier written to [cyan]{output}[/cyan]")
+    else:
+        console.print()
+        console.print(rendered)

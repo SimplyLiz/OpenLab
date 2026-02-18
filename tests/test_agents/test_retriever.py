@@ -43,9 +43,10 @@ async def tools_with_mock():
 
 
 async def test_retrieve_gene_identity(tools_with_mock):
-    identity, call_ids = await retrieve_gene_identity(tools_with_mock, "TP53")
+    identity, call_ids, per_source = await retrieve_gene_identity(tools_with_mock, "TP53")
     assert identity["gene_symbol"] == "TP53"
     assert len(call_ids) > 0
+    assert isinstance(per_source, list)
 
 
 async def test_retrieve_literature(tools_with_mock):

@@ -9,10 +9,15 @@ from openlab.agents.tools import ToolRegistry
 
 async def retrieve_gene_identity(
     tools: ToolRegistry, gene_symbol: str
-) -> tuple[dict[str, Any], list[str]]:
-    """Fetch gene identity from NCBI, Ensembl, UniProt in parallel."""
+) -> tuple[dict[str, Any], list[str], list[dict[str, Any]]]:
+    """Fetch gene identity from NCBI, Ensembl, UniProt in parallel.
+
+    Returns (merged_identity, call_ids, per_source_data) where per_source_data
+    is a list of individual source results tagged with their source name.
+    """
     import asyncio
 
+    source_names = ["ncbi", "ensembl", "uniprot"]
     results = await asyncio.gather(
         tools.call("ncbi_gene_info", {"gene_symbol": gene_symbol}),
         tools.call("ensembl_lookup", {"gene_symbol": gene_symbol}),
@@ -22,15 +27,17 @@ async def retrieve_gene_identity(
 
     identity: dict[str, Any] = {"gene_symbol": gene_symbol}
     call_ids: list[str] = []
+    per_source: list[dict[str, Any]] = []
 
-    for r in results:
+    for name, r in zip(source_names, results, strict=True):
         if isinstance(r, BaseException):
             continue
         if r.success:
             identity.update(r.data)
             call_ids.append(r.call_id)
+            per_source.append({"source": name, **r.data})
 
-    return identity, call_ids
+    return identity, call_ids, per_source
 
 
 async def retrieve_literature(
