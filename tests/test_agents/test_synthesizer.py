@@ -71,3 +71,37 @@ def test_short_sentences_skipped():
     text = "Yes. No. Maybe."
     claims = extract_claims(text)
     assert claims == []
+
+
+def test_extract_pubmed_prefix_citations():
+    """PubMed: prefix is recognized as PMID."""
+    text = "TP53 is mutated in colorectal cancer [PubMed:11025664] (0.8)."
+    claims = extract_claims(text)
+    assert len(claims) == 1
+    assert "PMID:11025664" in claims[0].citations
+    assert not claims[0].is_speculative
+
+
+def test_extract_comma_separated_citations():
+    """Comma-separated bracket with mixed sources extracts PMIDs."""
+    text = (
+        "The protein product is involved in cell cycle arrest "
+        "[uniprot, PubMed:11025664, PubMed:12524540] (0.95)."
+    )
+    claims = extract_claims(text)
+    assert len(claims) == 1
+    assert "PMID:11025664" in claims[0].citations
+    assert "PMID:12524540" in claims[0].citations
+    assert not claims[0].is_speculative
+
+
+def test_footnote_map_pubmed_prefix():
+    """Footnote map handles PubMed: prefix in reference lists."""
+    text = (
+        "TP53 is a tumor suppressor [1] (0.9).\n\n"
+        "[1] PubMed: 20301694\n"
+    )
+    claims = extract_claims(text)
+    cited = [c for c in claims if not c.is_speculative]
+    assert len(cited) >= 1
+    assert "PMID:20301694" in cited[0].citations
