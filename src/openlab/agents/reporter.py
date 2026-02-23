@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from openlab.agents.agent_models import (
@@ -81,7 +82,15 @@ def render_markdown(dossier: GeneDossier) -> str:
     for section in dossier.sections:
         lines.append(f"## {section.title}")
         lines.append("")
-        lines.append(section.content)
+        content = section.content
+        # Strip LLM-generated header that duplicates the section title
+        if content.lstrip().startswith("#"):
+            first_newline = content.find("\n")
+            if first_newline > 0:
+                header_line = content[:first_newline].strip().lstrip("#").strip()
+                if _titles_match(header_line, section.title):
+                    content = content[first_newline:].lstrip("\n")
+        lines.append(content)
         lines.append("")
 
         if section.claims:
@@ -115,6 +124,13 @@ def render_json(dossier: GeneDossier) -> dict[str, Any]:
     return dict(dossier.model_dump(mode="json"))
 
 
+def _titles_match(a: str, b: str) -> bool:
+    """Case-insensitive match after stripping 'Section:' prefix."""
+    def _norm(s: str) -> str:
+        return re.sub(r"^section:\s*", "", s, flags=re.IGNORECASE).strip().lower()
+    return _norm(a) == _norm(b)
+
+
 def _format_identity_section(identity: dict[str, Any]) -> DossierSection:
     lines = ["| Field | Value |", "|-------|-------|"]
     display_keys = [
@@ -130,6 +146,15 @@ def _format_identity_section(identity: dict[str, Any]) -> DossierSection:
     for key, label in display_keys:
         val = identity.get(key)
         if val:
+            if isinstance(val, dict):
+                val = (
+                    val.get("scientificName")
+                    or val.get("commonName")
+                    or val.get("name")
+                    or str(val)
+                )
+            elif isinstance(val, list):
+                val = ", ".join(str(v) for v in val[:5])
             lines.append(f"| {label} | {val} |")
 
     return DossierSection(title="Gene Identity", content="\n".join(lines))

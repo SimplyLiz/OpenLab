@@ -68,6 +68,56 @@ async def retrieve_literature(
     return articles, call_ids
 
 
+async def retrieve_cancer_evidence(
+    tools: ToolRegistry, gene_symbol: str
+) -> tuple[list[dict], list[str]]:
+    """Fetch cancer evidence from all 6 sources in parallel.
+
+    Returns (cancer_evidence_list, call_ids) where each item in the list is
+    an individual evidence dict (variant/mutation/entry) tagged with its source.
+    """
+    import asyncio
+
+    source_tools = [
+        "clinvar_search",
+        "cosmic_search",
+        "oncokb_search",
+        "cbioportal_search",
+        "civic_search",
+        "tcga_gdc_search",
+    ]
+
+    results = await asyncio.gather(
+        *(tools.call(t, {"gene_symbol": gene_symbol}) for t in source_tools),
+        return_exceptions=True,
+    )
+
+    evidence: list[dict] = []
+    call_ids: list[str] = []
+
+    for r in results:
+        if isinstance(r, BaseException):
+            continue
+        if not r.success:
+            continue
+        call_ids.append(r.call_id)
+        source = r.data.get("source", "unknown")
+        # Flatten inner items from variants/mutations/entries into individual evidence
+        for key in ("variants", "mutations", "entries"):
+            items = r.data.get(key, [])
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if isinstance(item, dict):
+                    item.setdefault("source", source)
+                    evidence.append(item)
+        # If no inner items, include the top-level result as evidence
+        if not any(r.data.get(k) for k in ("variants", "mutations", "entries")):
+            evidence.append({"source": source, **r.data})
+
+    return evidence, call_ids
+
+
 async def retrieve_existing_evidence(
     tools: ToolRegistry, gene_symbol: str, gene_id: int | None = None
 ) -> tuple[list[dict], list[str]]:

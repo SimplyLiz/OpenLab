@@ -78,6 +78,7 @@ async def run_dossier_agent(
         )
 
         from openlab.agents.retriever import (
+            retrieve_cancer_evidence,
             retrieve_existing_evidence,
             retrieve_gene_identity,
             retrieve_literature,
@@ -105,11 +106,15 @@ async def run_dossier_agent(
             run_id=run_id,
         )
 
-        # Phase 3: Evidence retrieval (parallel)
+        # Phase 3: Evidence retrieval (parallel — literature + DB + cancer sources)
         yield AgentEvent(
             event_type=AgentEventType.TOOL_STARTED,
             stage="evidence",
-            data={"tools": ["literature_search", "cancer_literature", "evidence_fetch"]},
+            data={"tools": [
+                "literature_search", "cancer_literature", "evidence_fetch",
+                "clinvar_search", "cosmic_search", "oncokb_search",
+                "cbioportal_search", "civic_search", "tcga_gdc_search",
+            ]},
             progress=0.25,
             run_id=run_id,
         )
@@ -119,9 +124,14 @@ async def run_dossier_agent(
 
         lit_task = retrieve_literature(tools, gene_symbol, cancer_type)
         ev_task = retrieve_existing_evidence(tools, gene_symbol, gene_id_int)
+        cancer_task = retrieve_cancer_evidence(tools, gene_symbol)
 
-        (articles, lit_call_ids), (existing_evidence, ev_call_ids) = await asyncio.wait_for(
-            asyncio.gather(lit_task, ev_task),
+        (
+            (articles, lit_call_ids),
+            (existing_evidence, ev_call_ids),
+            (cancer_evidence, cancer_call_ids),
+        ) = await asyncio.wait_for(
+            asyncio.gather(lit_task, ev_task, cancer_task),
             timeout=timeout,
         )
 
@@ -138,7 +148,11 @@ async def run_dossier_agent(
         yield AgentEvent(
             event_type=AgentEventType.TOOL_COMPLETED,
             stage="evidence",
-            data={"articles": len(articles), "existing_evidence": len(existing_evidence)},
+            data={
+                "articles": len(articles),
+                "existing_evidence": len(existing_evidence),
+                "cancer_evidence": len(cancer_evidence),
+            },
             progress=0.4,
             run_id=run_id,
         )
@@ -154,13 +168,21 @@ async def run_dossier_agent(
             flat: dict[str, Any] = {"source": ev.get("source_ref", "database")}
             flat.update(ev.get("payload", {}))
             all_evidence.append(flat)
-        # Literature items: map title → description so normalizer's keyword extraction fires
+        # Cancer evidence from all 6 sources (already flattened by retriever)
+        all_evidence.extend(cancer_evidence)
+        # Literature items: map title + abstract → description so normalizer fires
         for a in articles[:10]:
+            lit_item: dict[str, Any] = {"source": "literature"}
             if a.get("title"):
-                all_evidence.append(
-                    {"source": "literature", "description": a["title"]}
-                )
-        conv_result = await tools.call("convergence_score", {"evidence_list": all_evidence})
+                lit_item["description"] = a["title"]
+            if a.get("abstract"):
+                lit_item["abstract"] = a["abstract"]
+            if len(lit_item) > 1:
+                all_evidence.append(lit_item)
+
+        conv_result = await tools.call(
+            "convergence_score", {"evidence_list": all_evidence, "mode": "dossier"},
+        )
         convergence = conv_result.data.get("convergence_score", 0.0) if conv_result.success else 0.0
 
         # Phase 5: LLM synthesis

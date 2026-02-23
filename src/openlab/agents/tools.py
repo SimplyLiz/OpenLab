@@ -32,6 +32,13 @@ class ToolRegistry:
         self._tools["evidence_fetch"] = _evidence_fetch
         self._tools["convergence_score"] = _convergence_score
         self._tools["llm_synthesize"] = _llm_synthesize
+        # Cancer evidence sources
+        self._tools["clinvar_search"] = _clinvar_search
+        self._tools["cosmic_search"] = _cosmic_search
+        self._tools["oncokb_search"] = _oncokb_search
+        self._tools["cbioportal_search"] = _cbioportal_search
+        self._tools["civic_search"] = _civic_search
+        self._tools["tcga_gdc_search"] = _tcga_gdc_search
 
     async def call(
         self,
@@ -129,6 +136,7 @@ async def _cancer_literature(
         "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
         params={
             "query": query,
+            "resultType": "core",
             "format": "json",
             "pageSize": "25",
             "sort": "CITED desc",
@@ -141,6 +149,7 @@ async def _cancer_literature(
         {
             "pmid": r.get("pmid", ""),
             "title": r.get("title", ""),
+            "abstract": r.get("abstractText", ""),
             "authors": r.get("authorString", ""),
             "journal": r.get("journalTitle", ""),
             "year": r.get("pubYear", ""),
@@ -194,9 +203,18 @@ async def _evidence_fetch(
         }
 
 
-async def _convergence_score(http: httpx.AsyncClient, evidence_list: list, **kw) -> dict[str, Any]:
-    from openlab.services.convergence import compute_convergence
+async def _convergence_score(
+    http: httpx.AsyncClient, evidence_list: list, mode: str = "default", **kw
+) -> dict[str, Any]:
+    from openlab.services.convergence import compute_convergence, compute_dossier_convergence
 
+    if mode == "dossier":
+        result = compute_dossier_convergence(evidence_list)
+        return {
+            "convergence_score": result["score"],
+            "tier_breakdown": result["tiers"],
+            "_sources": ["convergence_algorithm"],
+        }
     score = compute_convergence(evidence_list)
     return {"convergence_score": score, "_sources": ["convergence_algorithm"]}
 
@@ -206,5 +224,66 @@ async def _llm_synthesize(
 ) -> dict[str, Any]:
     from openlab.services.llm_synthesis import synthesize
 
-    response = await synthesize(http, prompt, purpose="cancer_dossier")
+    response = await synthesize(
+        http, prompt, purpose="cancer_dossier", system_prompt=system_prompt,
+    )
     return {"response": response, "_sources": ["llm_synthesis"]}
+
+
+# ---------------------------------------------------------------------------
+# Cancer evidence source wrappers (lazy imports)
+# ---------------------------------------------------------------------------
+
+
+async def _clinvar_search(
+    http: httpx.AsyncClient, gene_symbol: str, **kw
+) -> dict[str, Any]:
+    from openlab.contrib.cancer.sources.clinvar import search_clinvar
+
+    result: dict[str, Any] = await search_clinvar(http, gene_symbol)
+    return result
+
+
+async def _cosmic_search(
+    http: httpx.AsyncClient, gene_symbol: str, **kw
+) -> dict[str, Any]:
+    from openlab.contrib.cancer.sources.cosmic import search_cosmic
+
+    result: dict[str, Any] = await search_cosmic(http, gene_symbol)
+    return result
+
+
+async def _oncokb_search(
+    http: httpx.AsyncClient, gene_symbol: str, **kw
+) -> dict[str, Any]:
+    from openlab.contrib.cancer.sources.oncokb import search_oncokb
+
+    result: dict[str, Any] = await search_oncokb(http, gene_symbol)
+    return result
+
+
+async def _cbioportal_search(
+    http: httpx.AsyncClient, gene_symbol: str, **kw
+) -> dict[str, Any]:
+    from openlab.contrib.cancer.sources.cbioportal import search_cbioportal
+
+    result: dict[str, Any] = await search_cbioportal(http, gene_symbol)
+    return result
+
+
+async def _civic_search(
+    http: httpx.AsyncClient, gene_symbol: str, **kw
+) -> dict[str, Any]:
+    from openlab.contrib.cancer.sources.civic import search_civic
+
+    result: dict[str, Any] = await search_civic(http, gene_symbol)
+    return result
+
+
+async def _tcga_gdc_search(
+    http: httpx.AsyncClient, gene_symbol: str, **kw
+) -> dict[str, Any]:
+    from openlab.contrib.cancer.sources.tcga_gdc import search_tcga_gdc
+
+    result: dict[str, Any] = await search_tcga_gdc(http, gene_symbol)
+    return result
