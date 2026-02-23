@@ -70,20 +70,60 @@ class ClinVarSource(CancerEvidenceSource):
         return results
 
     def normalize(self, raw: dict) -> dict[str, Any]:
-        """Normalize ClinVar summary to standard format."""
+        """Normalize ClinVar summary to standard format.
+
+        Supports both the new ClinVar API (post-2024, with germline_classification /
+        oncogenicity_classification / clinical_impact_classification) and the old API
+        (clinical_significance + top-level trait_set).
+        """
         genes = raw.get("genes", [])
         gene_info = genes[0] if genes else {}
 
-        clinical_sig = raw.get("clinical_significance", {})
-        if isinstance(clinical_sig, dict):
-            significance = clinical_sig.get("description", "")
-        else:
-            significance = str(clinical_sig)
+        # New ClinVar API: classification split into three objects
+        significance = ""
+        review_status = ""
+        for cls_key in (
+            "germline_classification",
+            "oncogenicity_classification",
+            "clinical_impact_classification",
+        ):
+            cls = raw.get(cls_key, {})
+            if isinstance(cls, dict) and cls.get("description"):
+                significance = cls["description"]
+                review_status = cls.get("review_status", "")
+                break
 
-        conditions = []
-        for trait in raw.get("trait_set", []):
-            if isinstance(trait, dict):
-                conditions.append(trait.get("trait_name", ""))
+        # Fallback: old-style field (pre-2024 API responses / test fixtures)
+        if not significance:
+            clinical_sig = raw.get("clinical_significance", {})
+            if isinstance(clinical_sig, dict):
+                significance = clinical_sig.get("description", "")
+            elif isinstance(clinical_sig, str):
+                significance = clinical_sig
+            review_status = review_status or raw.get("review_status", "")
+
+        if not review_status:
+            review_status = raw.get("review_status", "")
+
+        # Conditions from trait_set (now nested inside classification objects)
+        conditions: list[str] = []
+        for cls_key in (
+            "germline_classification",
+            "oncogenicity_classification",
+            "clinical_impact_classification",
+        ):
+            cls = raw.get(cls_key, {})
+            if isinstance(cls, dict):
+                for trait in cls.get("trait_set", []):
+                    if isinstance(trait, dict):
+                        name = trait.get("trait_name", "")
+                        if name and name not in conditions:
+                            conditions.append(name)
+        # Fallback: old top-level trait_set
+        if not conditions:
+            for trait in raw.get("trait_set", []):
+                if isinstance(trait, dict):
+                    conditions.append(trait.get("trait_name", ""))
 
         variation_set = raw.get("variation_set", [])
         variant_name = ""
@@ -97,10 +137,12 @@ class ClinVarSource(CancerEvidenceSource):
             "gene_symbol": gene_info.get("symbol", ""),
             "clinical_significance": significance,
             "conditions": conditions,
-            "review_status": raw.get("review_status", ""),
+            "review_status": review_status,
             "title": raw.get("title", ""),
             "categories": _classify_significance(significance),
-            "_sources": [f"https://www.ncbi.nlm.nih.gov/clinvar/variation/{raw.get('uid', '')}"],
+            "_sources": [
+                f"https://www.ncbi.nlm.nih.gov/clinvar/variation/{raw.get('uid', '')}"
+            ],
         }
 
 

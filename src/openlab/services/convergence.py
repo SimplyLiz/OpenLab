@@ -93,6 +93,85 @@ def compute_convergence(evidence_list: list[dict[str, Any]]) -> float:
     return round(max(0.0, min(1.0, score)), 3)
 
 
+# --- Tier definitions for dossier convergence ---
+
+_IDENTITY_SOURCES = frozenset({"ncbi", "ensembl", "ensembl_havana", "uniprot", "identity"})
+_CANCER_SOURCES = frozenset({"clinvar", "cosmic", "oncokb", "cbioportal", "civic", "tcga_gdc"})
+_LITERATURE_SOURCES = frozenset({"literature", "europepmc"})
+
+_DOSSIER_TIER_WEIGHTS: dict[str, float] = {
+    "cancer": 3.0,
+    "functional": 2.0,
+    "literature": 0.5,
+}
+
+
+def _classify_tier(source: str) -> str:
+    """Classify an evidence source into a convergence tier."""
+    s = source.lower()
+    if s in _IDENTITY_SOURCES:
+        return "identity"
+    if s in _CANCER_SOURCES:
+        return "cancer"
+    if s in _LITERATURE_SOURCES:
+        return "literature"
+    return "functional"
+
+
+def compute_dossier_convergence(
+    evidence_list: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Tiered convergence scoring for cancer dossiers.
+
+    Separates evidence into tiers and scores each independently:
+    - Identity tier (ncbi, ensembl, uniprot): EXCLUDED — not independent evidence
+    - Cancer tier (clinvar, cosmic, oncokb, cbioportal, civic, tcga_gdc): weight 3.0
+    - Functional tier (blast, interpro, string, etc.): weight 2.0
+    - Literature tier (europepmc): weight 0.5
+
+    Returns composite score + per-tier breakdown.
+    """
+    tiers: dict[str, list[dict[str, Any]]] = {
+        "cancer": [],
+        "functional": [],
+        "literature": [],
+    }
+
+    for ev in evidence_list:
+        tier = _classify_tier(ev.get("source", ""))
+        if tier == "identity":
+            continue  # Excluded — same gene described differently is not convergence
+        tiers.setdefault(tier, []).append(ev)
+
+    tier_scores: dict[str, dict[str, Any]] = {}
+    total_weighted = 0.0
+    total_weight = 0.0
+
+    for tier_name, tier_evidence in tiers.items():
+        if len(tier_evidence) < 2:
+            score = 1.0 if len(tier_evidence) == 1 else 0.0
+        else:
+            score = compute_convergence(tier_evidence)
+
+        weight = _DOSSIER_TIER_WEIGHTS.get(tier_name, 1.0)
+        tier_scores[tier_name] = {
+            "score": score,
+            "weight": weight,
+            "evidence_count": len(tier_evidence),
+        }
+
+        if tier_evidence:
+            total_weighted += score * weight
+            total_weight += weight
+
+    composite = round(total_weighted / total_weight, 3) if total_weight > 0 else 0.0
+
+    return {
+        "score": composite,
+        "tiers": tier_scores,
+    }
+
+
 def bootstrap_stability(
     evidence_list: list[dict[str, Any]],
     n_iterations: int = 50,

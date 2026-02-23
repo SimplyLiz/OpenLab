@@ -90,6 +90,7 @@ async def synthesize(
     *,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
+    system_prompt: str | None = None,
 ) -> str:
     """Send a prompt to the configured LLM provider and return the response.
 
@@ -97,17 +98,33 @@ async def synthesize(
     - If ollama is reachable, use it (free, local, fast for routine tasks)
     - Otherwise fall back to configured cloud provider
     """
+    effective_system_prompt = system_prompt or SYSTEM_PROMPT
     provider = _resolve_provider()
     if provider == "anthropic":
-        return await _anthropic(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+        return await _anthropic(
+            http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag,
+            system_prompt=effective_system_prompt,
+        )
     elif provider == "openai":
-        return await _openai(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+        return await _openai(
+            http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag,
+            system_prompt=effective_system_prompt,
+        )
     elif provider == "gemini":
-        return await _gemini(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+        return await _gemini(
+            http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag,
+            system_prompt=effective_system_prompt,
+        )
     elif provider == "grok":
-        return await _grok(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+        return await _grok(
+            http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag,
+            system_prompt=effective_system_prompt,
+        )
     elif provider == "ollama":
-        return await _ollama(http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag)
+        return await _ollama(
+            http, prompt, purpose=purpose, gene_locus_tag=gene_locus_tag,
+            system_prompt=effective_system_prompt,
+        )
     else:
         raise ValueError(
             "No LLM provider available"
@@ -222,13 +239,25 @@ def extract_category(response: str) -> str:
 
 
 def _get_ollama_model() -> str:
-    """Query ollama for installed models and return the first one."""
+    """Query ollama for installed models and return the best general-purpose one.
+
+    Prefers general-purpose models (llama, gemma, mistral, phi) over
+    specialist models (coder, embed) since we need reasoning ability.
+    """
     try:
         resp = httpx.get(f"{config.llm.ollama_url}/api/tags", timeout=2.0)
         if resp.status_code == 200:
             models = resp.json().get("models", [])
-            if models:
-                return str(models[0].get("name", ""))
+            if not models:
+                return ""
+            # Skip embedding and code-specialist models for synthesis tasks
+            _SPECIALIST_TAGS = ("embed", "coder", "code")
+            general = [
+                m for m in models
+                if not any(tag in m.get("name", "").lower() for tag in _SPECIALIST_TAGS)
+            ]
+            pick = general[0] if general else models[0]
+            return str(pick.get("name", ""))
     except Exception:
         pass
     return ""
@@ -269,6 +298,7 @@ async def _anthropic(
     *,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
+    system_prompt: str = SYSTEM_PROMPT,
 ) -> str:
     if not config.llm.anthropic_api_key:
         raise ValueError("anthropic_api_key not configured")
@@ -285,7 +315,7 @@ async def _anthropic(
         json={
             "model": model,
             "max_tokens": 2000,
-            "system": SYSTEM_PROMPT,
+            "system": system_prompt,
             "messages": [{"role": "user", "content": prompt}],
         },
         timeout=120.0,
@@ -319,6 +349,7 @@ async def _openai_compatible(
     provider_name: str,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
+    system_prompt: str = SYSTEM_PROMPT,
 ) -> str:
     """Shared helper for OpenAI-compatible chat completion APIs."""
     logger.info(f"LLM synthesis via {provider_name} ({model})")
@@ -332,7 +363,7 @@ async def _openai_compatible(
         json={
             "model": model,
             "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
             "temperature": 0.3,
@@ -365,6 +396,7 @@ async def _openai(
     *,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
+    system_prompt: str = SYSTEM_PROMPT,
 ) -> str:
     if not config.llm.openai_api_key:
         raise ValueError("openai_api_key not configured")
@@ -376,6 +408,7 @@ async def _openai(
         provider_name="openai",
         purpose=purpose,
         gene_locus_tag=gene_locus_tag,
+        system_prompt=system_prompt,
     )
 
 
@@ -385,6 +418,7 @@ async def _gemini(
     *,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
+    system_prompt: str = SYSTEM_PROMPT,
 ) -> str:
     if not config.llm.gemini_api_key:
         raise ValueError("gemini_api_key not configured")
@@ -396,6 +430,7 @@ async def _gemini(
         provider_name="gemini",
         purpose=purpose,
         gene_locus_tag=gene_locus_tag,
+        system_prompt=system_prompt,
     )
 
 
@@ -405,6 +440,7 @@ async def _grok(
     *,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
+    system_prompt: str = SYSTEM_PROMPT,
 ) -> str:
     if not config.llm.grok_api_key:
         raise ValueError("grok_api_key not configured")
@@ -416,6 +452,7 @@ async def _grok(
         provider_name="grok",
         purpose=purpose,
         gene_locus_tag=gene_locus_tag,
+        system_prompt=system_prompt,
     )
 
 
@@ -425,14 +462,17 @@ async def _ollama(
     *,
     purpose: str = "gene_synthesis",
     gene_locus_tag: str | None = None,
+    system_prompt: str = SYSTEM_PROMPT,
 ) -> str:
+    model = _model_for_provider("ollama")
+    logger.info(f"LLM synthesis via Ollama ({model})")
     start = time.perf_counter()
     resp = await http.post(
         f"{config.llm.ollama_url}/api/generate",
         json={
-            "model": config.llm.model,
+            "model": model,
             "prompt": prompt,
-            "system": SYSTEM_PROMPT,
+            "system": system_prompt,
             "stream": False,
         },
         timeout=300.0,
@@ -443,7 +483,7 @@ async def _ollama(
     try:
         usage_service.record_usage(
             provider="ollama",
-            model=config.llm.model,
+            model=model,
             purpose=purpose,
             prompt_tokens=data.get("prompt_eval_count", 0),
             completion_tokens=data.get("eval_count", 0),

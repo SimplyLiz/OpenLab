@@ -14,7 +14,10 @@ async def test_cbioportal_fetch(cbioportal_response):
         respx.get("https://www.cbioportal.org/api/genes/TP53").respond(
             json=cbioportal_response["gene"],
         )
-        respx.get("https://www.cbioportal.org/api/mutations").respond(
+        respx.get(
+                "https://www.cbioportal.org/api/molecular-profiles/"
+                "msk_impact_2017_mutations/mutations",
+            ).respond(
             json=cbioportal_response["mutations"],
         )
 
@@ -73,7 +76,10 @@ async def test_search_cbioportal_wrapper(cbioportal_response):
         respx.get("https://www.cbioportal.org/api/genes/TP53").respond(
             json=cbioportal_response["gene"],
         )
-        respx.get("https://www.cbioportal.org/api/mutations").respond(
+        respx.get(
+                "https://www.cbioportal.org/api/molecular-profiles/"
+                "msk_impact_2017_mutations/mutations",
+            ).respond(
             json=cbioportal_response["mutations"],
         )
 

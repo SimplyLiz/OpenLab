@@ -52,6 +52,59 @@ async def test_clinvar_normalize():
 
 
 @pytest.mark.asyncio
+async def test_clinvar_normalize_new_api():
+    """ClinVar normalize handles new API format (post-2024) with split classifications."""
+    source = ClinVarSource()
+    raw = {
+        "uid": "55555",
+        "title": "NM_000546.6(TP53):c.524G>A (p.Arg175His)",
+        "genes": [{"symbol": "TP53", "geneid": "7157"}],
+        "variation_set": [{"variation_name": "p.Arg175His"}],
+        "germline_classification": {
+            "description": "Likely pathogenic",
+            "review_status": "criteria provided, multiple submitters",
+            "trait_set": [
+                {"trait_name": "Li-Fraumeni syndrome 1"},
+                {"trait_name": "Breast cancer"},
+            ],
+        },
+        "oncogenicity_classification": {"description": ""},
+        "clinical_impact_classification": {"description": ""},
+    }
+    result = source.normalize(raw)
+    assert result["clinical_significance"] == "Likely pathogenic"
+    assert result["review_status"] == "criteria provided, multiple submitters"
+    assert "Li-Fraumeni syndrome 1" in result["conditions"]
+    assert "Breast cancer" in result["conditions"]
+    assert "cancer:likely_pathogenic" in result["categories"]
+    assert result["gene_symbol"] == "TP53"
+
+
+@pytest.mark.asyncio
+async def test_clinvar_normalize_new_api_oncogenicity():
+    """ClinVar normalize picks oncogenicity_classification when germline is empty."""
+    source = ClinVarSource()
+    raw = {
+        "uid": "66666",
+        "title": "test variant oncogenicity",
+        "genes": [{"symbol": "BRAF"}],
+        "variation_set": [{"variation_name": "V600E"}],
+        "germline_classification": {"description": ""},
+        "oncogenicity_classification": {
+            "description": "Pathogenic",
+            "review_status": "reviewed by expert panel",
+            "trait_set": [{"trait_name": "Melanoma"}],
+        },
+        "clinical_impact_classification": {"description": ""},
+    }
+    result = source.normalize(raw)
+    assert result["clinical_significance"] == "Pathogenic"
+    assert result["review_status"] == "reviewed by expert panel"
+    assert "Melanoma" in result["conditions"]
+    assert "cancer:pathogenic_variant" in result["categories"]
+
+
+@pytest.mark.asyncio
 async def test_clinvar_empty_response():
     """ClinVar returns empty list when no results."""
     async with respx.mock:

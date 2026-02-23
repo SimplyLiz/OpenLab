@@ -26,9 +26,13 @@ CBIOPORTAL_API = "https://www.cbioportal.org/api"
 class CBioPortalSource(CancerEvidenceSource):
     source_name = "cbioportal"
 
+    # Large pan-cancer study with broad mutation coverage
+    _PROFILE_ID = "msk_impact_2017_mutations"
+    _SAMPLE_LIST_ID = "msk_impact_2017_all"
+
     async def fetch(self, gene_symbol: str, http: httpx.AsyncClient) -> list[dict[str, Any]]:
         """Fetch mutation data from cBioPortal for a gene."""
-        # Get gene metadata
+        # Get gene metadata (entrez ID)
         resp = await http.get(
             f"{CBIOPORTAL_API}/genes/{gene_symbol}",
             headers={"Accept": "application/json"},
@@ -41,15 +45,14 @@ class CBioPortalSource(CancerEvidenceSource):
         if not entrez_id:
             return []
 
-        # Get mutations across all studies
+        # Query mutations from a large pan-cancer study
         resp = await http.get(
-            f"{CBIOPORTAL_API}/mutations",
+            f"{CBIOPORTAL_API}/molecular-profiles/{self._PROFILE_ID}/mutations",
             params={
                 "entrezGeneId": str(entrez_id),
+                "sampleListId": self._SAMPLE_LIST_ID,
                 "projection": "SUMMARY",
                 "pageSize": "50",
-                "pageNumber": "0",
-                "direction": "ASC",
             },
             headers={"Accept": "application/json"},
             timeout=30.0,

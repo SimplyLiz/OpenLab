@@ -281,6 +281,7 @@ def _normalize_dict(p: dict[str, Any]) -> NormalizedEvidence:
         text_fragments.append(p["functional_context"])
 
     # --- Cancer evidence: variants, mutations, clinical significance ---
+    # Nested lists (from raw source responses that contain lists of items)
     for variant in p.get("variants", []):
         if isinstance(variant, dict):
             sig = variant.get("clinical_significance", "")
@@ -317,6 +318,36 @@ def _normalize_dict(p: dict[str, Any]) -> NormalizedEvidence:
                 if isinstance(therapy, str) and therapy:
                     text_fragments.append(therapy)
                     result.categories.add("cancer:drug_target")
+
+    # Top-level cancer fields (from flattened individual variant/mutation/entry dicts)
+    for cat in p.get("categories", []):
+        if isinstance(cat, str):
+            result.categories.add(cat)
+    sig = p.get("clinical_significance", "")
+    if sig:
+        text_fragments.append(sig)
+    aa = p.get("aa_mutation", "") or p.get("aa_change", "")
+    if aa:
+        text_fragments.append(aa)
+    site = p.get("primary_site", "")
+    if site:
+        text_fragments.append(site)
+    for cond in p.get("conditions", []):
+        if isinstance(cond, str) and cond:
+            text_fragments.append(cond)
+    consequence = p.get("consequence_type", "")
+    if consequence:
+        text_fragments.append(consequence)
+    for therapy in p.get("therapies", []):
+        if isinstance(therapy, str) and therapy:
+            text_fragments.append(therapy)
+            result.categories.add("cancer:drug_target")
+    oncogenic = p.get("oncogenic", "")
+    if oncogenic:
+        text_fragments.append(oncogenic)
+    disease = p.get("disease_name", "")
+    if disease:
+        text_fragments.append(disease)
 
     # --- Product annotation (direct from GenBank) ---
     if p.get("product"):
